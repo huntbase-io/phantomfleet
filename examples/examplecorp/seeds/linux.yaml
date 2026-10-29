@@ -1,0 +1,547 @@
+# Example Corp Linux hosts (and the PAN-OS appliances, which answer from the
+# linux profile): web-prod-01/02, db-primary, build-runner-03, jump-01,
+# fw-edge-01, vpn-gw-01. Layered over the built-in linux profile (--seeds-dir).
+# Rows with `_hosts` are reported only by the hosts named there.
+#
+# Vulnerable inventory the story leans on:
+#   web-prod-01  log4j-core 2.14.1 in the payment portal (CVE-2021-44228),
+#                nginx 1.24.0 (CVE-2023-44487)
+#   fw-edge-01 / vpn-gw-01  PAN-OS 11.1.0 GlobalProtect (CVE-2024-3400, KEV) —
+#                the OS version itself comes from the nodes file.
+
+deb_packages:
+  - _hosts: web-prod-01|web-prod-02
+    name: nginx
+    version: 1.24.0-1~jammy
+    source: nginx
+    arch: amd64
+    revision: 1~jammy
+    status: install ok installed
+    maintainer: NGINX Packaging <nginx-packaging@f5.com>
+    section: httpd
+    priority: optional
+  - _hosts: web-prod-01
+    name: liblog4j2-java
+    version: 2.14.1-1
+    source: apache-log4j2
+    arch: all
+    revision: "1"
+    status: install ok installed
+    maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
+    section: java
+    priority: optional
+  - _hosts: web-prod-01|web-prod-02
+    name: openjdk-11-jre-headless
+    version: 11.0.24+8-1ubuntu3~22.04
+    source: openjdk-lts
+    arch: amd64
+    status: install ok installed
+    section: java
+    priority: optional
+  - _hosts: db-primary
+    name: postgresql-14
+    version: 14.13-0ubuntu0.22.04.1
+    source: postgresql-14
+    arch: amd64
+    status: install ok installed
+    section: database
+    priority: optional
+
+file:
+  - _hosts: web-prod-01
+    path: /opt/payment-portal/lib/log4j-core-2.14.1.jar
+    directory: /opt/payment-portal/lib
+    filename: log4j-core-2.14.1.jar
+    size: "1745700"
+    type: regular
+    uid: "1002"
+    mode: "0644"
+    mtime: "{{ago:9000h}}"
+  - _hosts: build-runner-03
+    path: /home/svc_deploy/.aws/credentials
+    directory: /home/svc_deploy/.aws
+    filename: credentials
+    size: "116"
+    type: regular
+    uid: "1001"
+    mode: "0600"
+    mtime: "{{ago:2000h}}"
+
+processes:
+  - _hosts: web-prod-01|web-prod-02
+    pid: "1290"
+    parent: "1"
+    name: nginx
+    path: /usr/sbin/nginx
+    cmdline: "nginx: master process /usr/sbin/nginx -g daemon on; master_process on;"
+    state: S
+    uid: "0"
+  - _hosts: web-prod-01
+    pid: "1422"
+    parent: "1"
+    name: java
+    path: /usr/lib/jvm/java-11-openjdk-amd64/bin/java
+    cmdline: java -Xmx2g -jar /opt/payment-portal/payment-portal.jar --server.port=8080
+    cwd: /opt/payment-portal
+    state: S
+    uid: "1002"
+  - _hosts: db-primary
+    pid: "905"
+    parent: "1"
+    name: postgres
+    path: /usr/lib/postgresql/14/bin/postgres
+    cmdline: /usr/lib/postgresql/14/bin/postgres -D /var/lib/postgresql/14/main -c config_file=/etc/postgresql/14/main/postgresql.conf
+    state: S
+    uid: "113"
+  - _hosts: build-runner-03
+    pid: "1310"
+    parent: "1"
+    name: Runner.Listener
+    path: /home/svc_deploy/actions-runner/bin/Runner.Listener
+    cmdline: /home/svc_deploy/actions-runner/bin/Runner.Listener run --startuptype service
+    cwd: /home/svc_deploy/actions-runner
+    state: S
+    uid: "1001"
+  - _hosts: fw-edge-01|vpn-gw-01
+    pid: "2231"
+    parent: "1"
+    name: gpsvc
+    path: /usr/local/bin/gpsvc
+    cmdline: /usr/local/bin/gpsvc -portal -gateway
+    state: S
+    uid: "0"
+
+listening_ports:
+  - _hosts: web-prod-01|web-prod-02
+    pid: "1290"
+    port: "443"
+    protocol: "6"
+    family: "2"
+    address: 0.0.0.0
+    path: /usr/sbin/nginx
+  - _hosts: web-prod-01|web-prod-02
+    pid: "1290"
+    port: "80"
+    protocol: "6"
+    family: "2"
+    address: 0.0.0.0
+    path: /usr/sbin/nginx
+  - _hosts: web-prod-01
+    pid: "1422"
+    port: "8080"
+    protocol: "6"
+    family: "2"
+    address: 127.0.0.1
+    path: /usr/lib/jvm/java-11-openjdk-amd64/bin/java
+  - _hosts: db-primary
+    pid: "905"
+    port: "5432"
+    protocol: "6"
+    family: "2"
+    address: 10.14.30.10
+    path: /usr/lib/postgresql/14/bin/postgres
+  - _hosts: fw-edge-01|vpn-gw-01
+    pid: "2231"
+    port: "443"
+    protocol: "6"
+    family: "2"
+    address: 0.0.0.0
+    path: /usr/local/bin/gpsvc
+
+crontab:
+  - _hosts: db-primary
+    event: ""
+    minute: "15"
+    hour: "2"
+    day_of_month: "*"
+    month: "*"
+    day_of_week: "*"
+    command: /usr/local/bin/pg_backup.sh --target s3://examplecorp-backups/db-primary >> /var/log/pg_backup.log 2>&1
+    path: /var/spool/cron/crontabs/svc_backup
+
+authorized_keys:
+  - _hosts: jump-01
+    uid: "2001"
+    algorithm: ssh-ed25519
+    key: AAAAC3NzaC1lZDI1NTE5AAAAIExampleCorpROkonkwoKeyForJumpHost0001
+    comment: r.okonkwo@eng-ws-22
+    key_file: /home/r.okonkwo/.ssh/authorized_keys
+
+# ---- Identity & inventory (generated from nodes.yaml; keep in step) ----
+# Tables listed in _replace drop the built-in profile rows: these hosts
+# report exactly what is written here (see the "Seeds" section of the top-level README.md).
+_replace: [users, groups, user_groups, logged_in_users, interface_addresses, usb_devices, chrome_extensions, platform_info, last]
+chrome_extensions: []
+groups:
+- gid: "0"
+  gid_signed: "0"
+  groupname: root
+- gid: "4"
+  gid_signed: "4"
+  groupname: adm
+- gid: "27"
+  gid_signed: "27"
+  groupname: sudo
+- gid: "100"
+  gid_signed: "100"
+  groupname: users
+- _hosts: web-prod-01
+  gid: "1001"
+  gid_signed: "1001"
+  groupname: svc_deploy
+- _hosts: web-prod-02
+  gid: "1001"
+  gid_signed: "1001"
+  groupname: svc_deploy
+- _hosts: db-primary
+  gid: "1003"
+  gid_signed: "1003"
+  groupname: svc_backup
+- _hosts: build-runner-03
+  gid: "1001"
+  gid_signed: "1001"
+  groupname: svc_deploy
+interface_addresses:
+- interface: lo
+  address: "127.0.0.1"
+  mask: "255.0.0.0"
+  broadcast: ""
+  point_to_point: ""
+  type: manual
+- _hosts: web-prod-01
+  interface: ens160
+  address: "10.14.22.31"
+  mask: "255.255.255.0"
+  broadcast: "10.14.22.255"
+  point_to_point: ""
+  type: manual
+- _hosts: web-prod-02
+  interface: ens160
+  address: "10.14.22.32"
+  mask: "255.255.255.0"
+  broadcast: "10.14.22.255"
+  point_to_point: ""
+  type: manual
+- _hosts: db-primary
+  interface: ens160
+  address: "10.14.30.10"
+  mask: "255.255.255.0"
+  broadcast: "10.14.30.255"
+  point_to_point: ""
+  type: manual
+- _hosts: fw-edge-01
+  interface: ethernet1/1
+  address: "10.14.1.1"
+  mask: "255.255.255.0"
+  broadcast: "10.14.1.255"
+  point_to_point: ""
+  type: manual
+- _hosts: vpn-gw-01
+  interface: ethernet1/1
+  address: "10.14.1.20"
+  mask: "255.255.255.0"
+  broadcast: "10.14.1.255"
+  point_to_point: ""
+  type: manual
+- _hosts: build-runner-03
+  interface: ens160
+  address: "10.14.50.13"
+  mask: "255.255.255.0"
+  broadcast: "10.14.50.255"
+  point_to_point: ""
+  type: manual
+- _hosts: jump-01
+  interface: ens160
+  address: "10.14.2.5"
+  mask: "255.255.255.0"
+  broadcast: "10.14.2.255"
+  point_to_point: ""
+  type: manual
+last:
+- _hosts: web-prod-01
+  username: reboot
+  tty: '~'
+  pid: "0"
+  type: "2"
+  type_name: boot-time
+  time: "{{ago:912h}}"
+  host: ""
+- _hosts: web-prod-02
+  username: reboot
+  tty: '~'
+  pid: "0"
+  type: "2"
+  type_name: boot-time
+  time: "{{ago:912h}}"
+  host: ""
+- _hosts: db-primary
+  username: reboot
+  tty: '~'
+  pid: "0"
+  type: "2"
+  type_name: boot-time
+  time: "{{ago:912h}}"
+  host: ""
+- _hosts: fw-edge-01
+  username: admin
+  tty: pts/0
+  pid: "30211"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:52h}}"
+  host: "10.14.2.5"
+- _hosts: vpn-gw-01
+  username: admin
+  tty: pts/0
+  pid: "30211"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:52h}}"
+  host: "10.14.2.5"
+- _hosts: build-runner-03
+  username: reboot
+  tty: '~'
+  pid: "0"
+  type: "2"
+  type_name: boot-time
+  time: "{{ago:912h}}"
+  host: ""
+- _hosts: jump-01
+  username: reboot
+  tty: '~'
+  pid: "0"
+  type: "2"
+  type_name: boot-time
+  time: "{{ago:912h}}"
+  host: ""
+- _hosts: jump-01
+  username: r.okonkwo
+  tty: pts/0
+  pid: "48120"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:3h}}"
+  host: "10.14.41.122"
+- _hosts: jump-01
+  username: m.delgado
+  tty: pts/1
+  pid: "47002"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:26h}}"
+  host: "10.14.41.107"
+- _hosts: web-prod-01
+  username: r.okonkwo
+  tty: pts/0
+  pid: "21877"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:50h}}"
+  host: "10.14.2.5"
+- _hosts: web-prod-02
+  username: r.okonkwo
+  tty: pts/0
+  pid: "21877"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:50h}}"
+  host: "10.14.2.5"
+- _hosts: db-primary
+  username: r.okonkwo
+  tty: pts/0
+  pid: "21877"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:50h}}"
+  host: "10.14.2.5"
+- _hosts: build-runner-03
+  username: m.delgado
+  tty: pts/0
+  pid: "19440"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:98h}}"
+  host: "10.14.2.5"
+logged_in_users:
+- _hosts: jump-01
+  type: user
+  user: r.okonkwo
+  tty: pts/0
+  host: "10.14.41.122"
+  time: "{{ago:3h}}"
+  pid: "48120"
+patches: []
+platform_info:
+- _hosts: web-prod-01
+  vendor: VMware, Inc.
+  version: VMW71.00V.21100432.B64.2301110304
+  date: 01/11/2023
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: web-prod-02
+  vendor: VMware, Inc.
+  version: VMW71.00V.21100432.B64.2301110304
+  date: 01/11/2023
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: db-primary
+  vendor: Dell Inc.
+  version: "1.13.2"
+  date: 05/14/2024
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: fw-edge-01
+  vendor: Palo Alto Networks
+  version: PAN-OS 11.1.0
+  date: ""
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: vpn-gw-01
+  vendor: Palo Alto Networks
+  version: PAN-OS 11.1.0
+  date: ""
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: build-runner-03
+  vendor: VMware, Inc.
+  version: VMW71.00V.21100432.B64.2301110304
+  date: 01/11/2023
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: jump-01
+  vendor: VMware, Inc.
+  version: VMW71.00V.21100432.B64.2301110304
+  date: 01/11/2023
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+process_events: []
+socket_events: []
+usb_devices: []
+user_groups:
+- uid: "0"
+  gid: "0"
+- _hosts: web-prod-01
+  uid: "1001"
+  gid: "1001"
+- _hosts: web-prod-02
+  uid: "1001"
+  gid: "1001"
+- _hosts: db-primary
+  uid: "1003"
+  gid: "1003"
+- _hosts: build-runner-03
+  uid: "1001"
+  gid: "1001"
+- _hosts: jump-01
+  uid: "2001"
+  gid: "27"
+- _hosts: jump-01
+  uid: "2002"
+  gid: "27"
+users:
+- uid: "0"
+  gid: "0"
+  uid_signed: "0"
+  username: root
+  description: root
+  directory: /root
+  shell: /bin/bash
+  type: ""
+- uid: "33"
+  gid: "33"
+  uid_signed: "33"
+  username: www-data
+  description: www-data
+  directory: /var/www
+  shell: /usr/sbin/nologin
+  type: ""
+- uid: "998"
+  gid: "998"
+  uid_signed: "998"
+  username: osquery
+  description: osquery
+  directory: /var/osquery
+  shell: /usr/sbin/nologin
+  type: ""
+- _hosts: web-prod-01
+  uid: "1001"
+  gid: "1001"
+  uid_signed: "1001"
+  username: svc_deploy
+  description: Deploy service account
+  directory: /home/svc_deploy
+  shell: /bin/bash
+  type: ""
+- _hosts: web-prod-02
+  uid: "1001"
+  gid: "1001"
+  uid_signed: "1001"
+  username: svc_deploy
+  description: Deploy service account
+  directory: /home/svc_deploy
+  shell: /bin/bash
+  type: ""
+- _hosts: db-primary
+  uid: "1003"
+  gid: "1003"
+  uid_signed: "1003"
+  username: svc_backup
+  description: Backup service account
+  directory: /home/svc_backup
+  shell: /bin/bash
+  type: ""
+- _hosts: build-runner-03
+  uid: "1001"
+  gid: "1001"
+  uid_signed: "1001"
+  username: svc_deploy
+  description: Deploy service account
+  directory: /home/svc_deploy
+  shell: /bin/bash
+  type: ""
+- _hosts: jump-01
+  uid: "2001"
+  gid: "2001"
+  uid_signed: "2001"
+  username: r.okonkwo
+  description: Engineering lead
+  directory: /home/r.okonkwo
+  shell: /bin/bash
+  type: ""
+- _hosts: jump-01
+  uid: "2002"
+  gid: "2002"
+  uid_signed: "2002"
+  username: m.delgado
+  description: Engineer
+  directory: /home/m.delgado
+  shell: /bin/bash
+  type: ""

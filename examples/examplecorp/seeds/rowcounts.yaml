@@ -1,0 +1,7 @@
+# Row counts for tables the Example Corp seeds add (the built-ins cover the rest).
+# Pinned hosts report a declared table's curated rows only, so these just bound
+# the story tables; host-specific rows are always reported in full.
+drivers: [1, 1]
+hash: [1, 1]
+process_events: [1, 1]
+socket_events: [1, 1]

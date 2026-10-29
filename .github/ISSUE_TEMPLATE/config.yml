@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/huntbase-io/phantomfleet/security/advisories/new
+    about: Please report security issues privately rather than opening a public issue.
+  - name: Questions and ideas
+    url: https://github.com/huntbase-io/phantomfleet/discussions
+    about: Ask how to use phantomfleet, or share what you test with it.
+  - name: Code of Conduct
+    url: https://github.com/huntbase-io/phantomfleet/blob/main/CODE_OF_CONDUCT.md
+    about: How we expect contributors to behave, and how to report problems.

@@ -1,0 +1,87 @@
+# Cross-platform seed tables, merged as a BASE into every platform profile.
+# A platform file (linux/darwin/windows.yaml) that defines the same table name
+# replaces this base table for that platform. Placeholders {{hostname}}, {{ip}},
+# {{uuid}}, {{version}}, {{username}} are filled per node.
+
+# --- browser / app visibility (look similar across OSes) ---
+chrome_extensions:
+  - name: "uBlock Origin"
+    identifier: cjpalhdlnbpafiamejdnhcphjbkeiagm
+    version: "1.57.2"
+    author: "Raymond Hill"
+    persistent: "1"
+    path: "/home/{{username}}/.config/google-chrome/Default/Extensions/cjpalhdlnbpafiamejdnhcphjbkeiagm"
+    permissions: "storage,tabs,webRequest,webRequestBlocking,<all_urls>"
+    update_url: "https://clients2.google.com/service/update2/crx"
+  - name: "Google Docs Offline"
+    identifier: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+    version: "1.71.0"
+    author: "Google"
+    persistent: "1"
+    permissions: "alarms,storage,unlimitedStorage"
+  - name: "Suspicious Helper"
+    identifier: pqrstuvwxyzabcdefghijklmnopqrstu
+    version: "0.0.3"
+    author: "unknown"
+    persistent: "1"
+    permissions: "tabs,cookies,<all_urls>,webRequest"
+    update_url: "http://updates.example-cdn.ru/crx"
+
+firefox_addons:
+  - name: "Privacy Badger"
+    identifier: jid1-MnnxcxisBPnSXQ@jetpack
+    version: "2024.1.17"
+    type: extension
+    active: "1"
+    path: "/home/{{username}}/.mozilla/firefox/default/extensions"
+  - name: "Bitwarden"
+    identifier: "{446900e4-71c2-419f-a6a7-df9c091e268b}"
+    version: "2024.4.0"
+    type: extension
+    active: "1"
+
+browser_plugins:
+  - name: "Chrome PDF Viewer"
+    version: "1"
+    path: "internal-pdf-viewer"
+    native: "0"
+
+python_packages:
+  - name: requests
+    version: "2.31.0"
+    summary: "Python HTTP for Humans."
+    author: "Kenneth Reitz"
+    license: "Apache 2.0"
+    path: "/usr/lib/python3/dist-packages"
+  - name: urllib3
+    version: "1.26.5"
+    summary: "HTTP library with thread-safe connection pooling"
+    author: "Andrey Petrov"
+    license: "MIT"
+  - name: cryptography
+    version: "3.4.8"
+    summary: "cryptography is a package which provides cryptographic recipes"
+    author: "PyCA"
+    license: "BSD"
+
+vscode_extensions:
+  - name: python
+    uuid: ms-python.python
+    version: "2024.4.1"
+    publisher: "Microsoft"
+    path: "/home/{{username}}/.vscode/extensions/ms-python.python-2024.4.1"
+  - name: gitlens
+    uuid: eamodio.gitlens
+    version: "15.0.4"
+    publisher: "GitKraken"
+
+usb_devices:
+  - usb_address: "1"
+    usb_port: "1"
+    vendor: "Logitech, Inc."
+    vendor_id: "046d"
+    model: "USB Receiver"
+    model_id: "c52b"
+    serial: ""
+    class: "0"
+    removable: "1"

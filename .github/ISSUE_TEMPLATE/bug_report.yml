@@ -1,0 +1,59 @@
+name: Bug report
+description: Something in phantomfleet doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please do not paste enroll secrets, node keys or internal hostnames.
+        For security vulnerabilities, use private vulnerability reporting (Security tab) instead of an issue.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command / configuration
+      description: The phantomfleet command line or Compose file (secrets redacted).
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Output with `--mode verbose` if possible.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: phantomfleet version
+      description: Output of `phantomfleet --version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: server
+    attributes:
+      label: TLS server
+      options:
+        - osctrl
+        - Fleet
+        - Other osquery TLS server
+    validations:
+      required: true
+  - type: input
+    id: server-version
+    attributes:
+      label: Server version
+  - type: dropdown
+    id: install
+    attributes:
+      label: How are you running phantomfleet?
+      options:
+        - Release binary
+        - Docker image / Compose
+        - Built from source

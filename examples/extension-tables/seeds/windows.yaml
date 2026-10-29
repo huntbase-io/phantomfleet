@@ -1,0 +1,14 @@
+# Stored rows on ws-01 only (_hosts). Other hosts have none.
+example_ext_folders:
+  - {_hosts: ws-01, folder_id: f-1, parent: "", name: 'C:\Users\j.doe', bytes: "1000"}
+  - {_hosts: ws-01, folder_id: f-2, parent: f-1, name: Documents, bytes: "5000"}
+  - {_hosts: ws-01, folder_id: f-3, parent: f-1, name: Downloads, bytes: "20000"}
+  - {_hosts: ws-01, folder_id: f-4, parent: f-2, name: Projects, bytes: "7000"}
+  - {_hosts: ws-01, folder_id: f-5, parent: f-4, name: Archive, bytes: "3000"}
+
+example_ext_downloads:
+  - {_hosts: ws-01, ts: "{{ago:3h}}", user: j.doe, source_host: downloads.example.com, file: setup.msi, folder_id: f-3, bytes: "12000000", verdict: allowed}
+  - {_hosts: ws-01, ts: "{{ago:2h}}", user: j.doe, source_host: docs.example.org, file: report.pdf, folder_id: f-2, bytes: "250000", verdict: allowed}
+  - {_hosts: ws-01, ts: "{{ago:119m}}", user: j.doe, source_host: docs.example.org, file: notes.pdf, folder_id: f-3, bytes: "120000", verdict: allowed}
+  - {_hosts: ws-01, ts: "{{ago:1h}}", user: svc-backup, source_host: mirror.example.net, file: tool.zip, folder_id: f-3, bytes: "4000000", verdict: blocked}
+  - {_hosts: ws-01, ts: "{{ago:30m}}", user: j.doe, source_host: downloads.example.com, file: update.msi, folder_id: f-3, bytes: "9000000", verdict: allowed}

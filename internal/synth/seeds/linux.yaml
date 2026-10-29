@@ -1,0 +1,281 @@
+# Curated, realistic rows for a Linux (Ubuntu) node. Placeholders {{hostname}},
+# {{ip}}, {{uuid}}, {{version}}, {{username}} are filled per simulated node.
+# These are the "anchor" rows; listing tables are padded up to rowcounts.yaml.
+
+os_version:
+  - name: Ubuntu
+    version: "24.04.3 LTS (Noble Numbat)"
+    major: "24"
+    minor: "04"
+    patch: "0"
+    build: ""
+    platform: ubuntu
+    platform_like: debian
+    codename: noble
+    arch: x86_64
+
+system_info:
+  - hostname: "{{hostname}}"
+    uuid: "{{uuid}}"
+    computer_name: "{{hostname}}"
+    local_hostname: "{{hostname}}"
+    cpu_brand: "Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz"
+    cpu_type: x86_64
+    cpu_physical_cores: "4"
+    cpu_logical_cores: "8"
+    physical_memory: "16777216000"
+    hardware_vendor: "QEMU"
+    hardware_model: "Standard PC (Q35 + ICH9, 2009)"
+    hardware_serial: "PF-{{hex:10}}"
+
+osquery_info:
+  - uuid: "{{uuid}}"
+    version: "{{version}}"
+    pid: "1187"
+    instance_id: "{{uuid}}"
+    config_hash: "7155bb2b98162fa5641d340e03a38d0502df34f0"
+    config_valid: "1"
+    build_platform: ubuntu
+    build_distro: noble
+    watcher: "1186"
+
+kernel_info:
+  - version: "6.8.0-85-generic"
+    arguments: "BOOT_IMAGE=/boot/vmlinuz-6.8.0-85-generic root=/dev/sda1 ro quiet splash"
+    path: "/boot/vmlinuz-6.8.0-85-generic"
+    device: "/dev/sda1"
+
+uptime:
+  - days: "5"
+    hours: "7"
+    minutes: "23"
+    seconds: "11"
+    total_seconds: "458591"
+
+logged_in_users:
+  - user: "{{username}}"
+    host: "{{ip}}"
+    tty: "pts/0"
+    type: "user"
+    time: "1716200000"
+
+users:
+  - uid: "0"
+    gid: "0"
+    username: root
+    description: root
+    directory: /root
+    shell: /bin/bash
+  - uid: "1000"
+    gid: "1000"
+    username: "{{username}}"
+    description: "{{username}}"
+    directory: "/home/{{username}}"
+    shell: /bin/bash
+  - uid: "999"
+    gid: "999"
+    username: systemd-network
+    directory: "/run/systemd"
+    shell: /usr/sbin/nologin
+
+processes:
+  - pid: "1"
+    name: systemd
+    path: /usr/lib/systemd/systemd
+    cmdline: "/sbin/init"
+    state: S
+    uid: "0"
+    parent: "0"
+  - pid: "892"
+    name: sshd
+    path: /usr/sbin/sshd
+    cmdline: "sshd: /usr/sbin/sshd -D [listener]"
+    state: S
+    uid: "0"
+    parent: "1"
+  - pid: "1187"
+    name: osqueryd
+    path: /usr/bin/osqueryd
+    cmdline: "/usr/bin/osqueryd --flagfile=/etc/osquery/osquery.flags"
+    state: S
+    uid: "0"
+    parent: "1"
+  - pid: "640"
+    name: cron
+    path: /usr/sbin/cron
+    state: S
+    uid: "0"
+    parent: "1"
+  - pid: "1456"
+    name: bash
+    path: /usr/bin/bash
+    cmdline: "-bash"
+    state: S
+    uid: "1000"
+    parent: "892"
+  # Patterned template: padding clones this with fresh values each time so the
+  # process list looks varied. Mixes fixed fields (state) and patterns.
+  - pid: "{{int:300..65000}}"
+    name: "{{choice:nginx|redis-server|postgres|python3|node|java|containerd|dockerd|cron|rsyslogd}}"
+    path: "/usr/bin/{{word}}"
+    cmdline: "/usr/bin/{{word}} --config /etc/{{word}}.conf"
+    state: S
+    uid: "{{int:0..1500}}"
+    parent: "1"
+
+listening_ports:
+  - pid: "892"
+    port: "22"
+    protocol: "6"
+    family: "2"
+    address: "0.0.0.0"
+  - pid: "1187"
+    port: "9000"
+    protocol: "6"
+    family: "2"
+    address: "127.0.0.1"
+  - pid: "705"
+    port: "53"
+    protocol: "17"
+    family: "2"
+    address: "127.0.0.53"
+
+interface_addresses:
+  - interface: eth0
+    address: "{{ip}}"
+    mask: "255.255.255.0"
+    broadcast: "10.0.0.255"
+    type: dhcp
+  - interface: lo
+    address: "127.0.0.1"
+    mask: "255.0.0.0"
+    type: static
+
+# --- persistence ---
+crontab:
+  - event: ""
+    minute: "17"
+    hour: "*"
+    day_of_month: "*"
+    month: "*"
+    day_of_week: "*"
+    command: "/usr/bin/certbot renew --quiet"
+    path: "/etc/crontab"
+  - event: "@reboot"
+    minute: ""
+    hour: ""
+    command: "/opt/app/bin/startup.sh"
+    path: "/var/spool/cron/crontabs/{{username}}"
+
+authorized_keys:
+  - uid: "1000"
+    algorithm: "ssh-ed25519"
+    key: "AAAAC3NzaC1lZDI1NTE5AAAAIK7xV2m...{{username}}"
+    key_file: "/home/{{username}}/.ssh/authorized_keys"
+
+shell_history:
+  - uid: "1000"
+    time: "1716100000"
+    command: "sudo apt-get update && sudo apt-get upgrade -y"
+    history_file: "/home/{{username}}/.bash_history"
+  - uid: "1000"
+    time: "1716100200"
+    command: "curl -fsSL https://get.example.sh | bash"
+    history_file: "/home/{{username}}/.bash_history"
+  - uid: "0"
+    time: "1716100500"
+    command: "systemctl restart sshd"
+    history_file: "/root/.bash_history"
+
+kernel_modules:
+  - name: "nf_conntrack"
+    size: "180224"
+    used_by: "nf_nat,nft_ct"
+    status: "Live"
+    address: "0xffffffffc0a12000"
+  - name: "overlay"
+    size: "151552"
+    used_by: "-"
+    status: "Live"
+    address: "0xffffffffc0890000"
+
+suid_bin:
+  - path: "/usr/bin/sudo"
+    username: root
+    groupname: root
+    permissions: "rwsr-xr-x"
+  - path: "/usr/bin/passwd"
+    username: root
+    groupname: root
+    permissions: "rwsr-xr-x"
+
+# --- software inventory ---
+deb_packages:
+  - name: openssl
+    version: "1.1.1f-1ubuntu2.22"
+    source: openssl
+    size: "1075"
+    arch: amd64
+    revision: "1ubuntu2.22"
+    status: "install ok installed"
+    maintainer: "Ubuntu Developers"
+    section: utils
+    priority: important
+  - name: openssh-server
+    version: "1:8.9p1-3ubuntu0.7"
+    arch: amd64
+    status: "install ok installed"
+    section: net
+    priority: optional
+  - name: curl
+    version: "7.81.0-1ubuntu1.16"
+    arch: amd64
+    status: "install ok installed"
+    section: web
+    priority: optional
+  # Patterned template for the bulk of installed packages.
+  - name: "lib{{word}}{{int:0..9}}"
+    version: "{{int:1..6}}.{{int:0..20}}.{{int:0..9}}-{{int:1..3}}ubuntu{{int:0..5}}"
+    source: "{{word}}"
+    size: "{{int:50..40000}}"
+    arch: "{{choice:amd64|all}}"
+    status: "install ok installed"
+    section: "{{choice:libs|utils|net|admin|devel|python}}"
+    priority: "{{choice:optional|important|standard}}"
+
+# The root filesystem always exists (servers read free space from it); the
+# template pads the table with per-user runtime tmpfs mounts.
+mounts:
+  - device: /dev/sda1
+    device_alias: /dev/sda1
+    path: /
+    type: ext4
+    blocks_size: "4096"
+    blocks: "25600000"
+    blocks_free: "15032385"
+    blocks_available: "13721600"
+    inodes: "6553600"
+    inodes_free: "6012345"
+    flags: rw,relatime
+  - device: /dev/sda15
+    device_alias: /dev/sda15
+    path: /boot/efi
+    type: vfat
+    blocks_size: "512"
+    blocks: "213716"
+    blocks_free: "201424"
+    blocks_available: "201424"
+    inodes: "0"
+    inodes_free: "0"
+    flags: rw,relatime
+  - device: tmpfs
+    device_alias: tmpfs
+    path: "/run/user/{{int:1000..1020}}"
+    type: tmpfs
+    blocks_size: "4096"
+    blocks: "{{int:100000..400000}}"
+    blocks_free: "{{int:90000..100000}}"
+    blocks_available: "{{int:90000..100000}}"
+    inodes: "{{int:100000..400000}}"
+    inodes_free: "{{int:90000..100000}}"
+    flags: rw,nosuid,nodev,relatime

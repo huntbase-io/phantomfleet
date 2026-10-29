@@ -1,0 +1,10 @@
+# A process template padded from the example_linux_services catalog: each
+# padded row is one coherent catalog entry, each entry used at most once.
+processes:
+  - pid: "{{int:300..65000}}"
+    name: "{{row:example_linux_services.name}}"
+    path: "{{row:example_linux_services.path}}"
+    cmdline: "{{row:example_linux_services.cmdline}}"
+    uid: "{{row:example_linux_services.uid}}"
+    state: S
+    parent: "1"

@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: gofmt
+        run: |
+          out="$(gofmt -s -l .)"
+          if [ -n "$out" ]; then echo "::error::gofmt needed:"; echo "$out"; exit 1; fi
+      - name: go mod tidy check
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
+      - name: go vet
+        run: go vet ./...
+      - name: go test
+        run: go test -race -count=1 ./...
+      - name: govulncheck
+        # setup-go installs the toolchain line from go.mod, the one release
+        # binaries are built with, so stdlib findings match what ships.
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+      - name: Toolchain matches the Dockerfile
+        run: |
+          want="$(sed -n 's/^toolchain go//p' go.mod)"
+          got="$(sed -n 's/^ARG GO_VERSION=//p' Dockerfile)"
+          go version
+          if [ "$want" != "$got" ]; then echo "::error::go.mod toolchain go$want but Dockerfile GO_VERSION=$got"; exit 1; fi
+          case "$(go env GOVERSION)" in "go$want") ;; *) echo "::error::CI runs $(go env GOVERSION), want go$want"; exit 1;; esac
+      - name: Dependency licences
+        # Fails on any forbidden, restricted (GPL/LGPL/AGPL), reciprocal or
+        # unknown licence among linked modules, for every release platform.
+        run: |
+          GOBIN="$RUNNER_TEMP/bin" go install github.com/google/go-licenses/v2@v2.0.1
+          for os in linux darwin windows; do
+            GOOS=$os "$RUNNER_TEMP/bin/go-licenses" check . \
+              --ignore github.com/huntbase-io/phantomfleet \
+              --disallowed_types=forbidden,restricted,reciprocal,unknown
+          done
+          sh scripts/third-party-licenses.sh "$RUNNER_TEMP/licenses"
+      - name: go build
+        run: CGO_ENABLED=0 go build -trimpath -ldflags "-X main.version=ci-${GITHUB_SHA::7}" -o phantomfleet . && ./phantomfleet --version
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12.2
+
+  goreleaser-check:
+    name: GoReleaser config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: goreleaser/goreleaser-action@v7
+        with:
+          version: "~> v2"
+          args: check
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
+          load: true
+          tags: phantomfleet:ci
+          build-args: VERSION=ci-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Smoke test
+        run: docker run --rm phantomfleet:ci --version

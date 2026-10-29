@@ -1,0 +1,26 @@
+# Keep the build context to what `go build` needs (sources + embedded assets).
+.git
+.github
+.gitignore
+.dockerignore
+.editorconfig
+.golangci.yml
+.goreleaser.yaml
+Dockerfile
+Makefile
+dist/
+bin/
+deploy/
+examples/
+docs/
+*.md
+*.tar.gz
+*.state.json
+phantomfleet_state.json
+state.json
+phantomfleet
+.env
+.env.*
+.DS_Store
+.idea/
+.vscode/

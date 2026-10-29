@@ -1,0 +1,310 @@
+# Example Corp macOS hosts: eng-ws-07 (m.delgado), eng-ws-22 (r.okonkwo).
+# Layered over the built-in darwin profile (--seeds-dir). Rows with `_hosts` are
+# reported only by the hosts named there.
+#
+# Vulnerable inventory: Google Chrome 116.0.5845.96 bundles a libwebp affected by
+# CVE-2023-4863 (fixed in 116.0.5845.187); Homebrew webp 1.3.1 likewise
+# (fixed in 1.3.2).
+
+apps:
+  - _hosts: eng-ws-07|eng-ws-22
+    _key: bundle_identifier
+    name: Google Chrome.app
+    path: /Applications/Google Chrome.app
+    bundle_identifier: com.google.Chrome
+    bundle_name: Google Chrome
+    bundle_short_version: 116.0.5845.96
+    bundle_version: 5845.96
+    display_name: Google Chrome
+  - _hosts: eng-ws-07|eng-ws-22
+    name: Visual Studio Code.app
+    path: /Applications/Visual Studio Code.app
+    bundle_identifier: com.microsoft.VSCode
+    bundle_name: Code
+    bundle_short_version: 1.92.2
+    display_name: Visual Studio Code
+  - _hosts: eng-ws-07|eng-ws-22
+    name: Falcon.app
+    path: /Applications/Falcon.app
+    bundle_identifier: com.crowdstrike.falcon.App
+    bundle_name: Falcon
+    bundle_short_version: 7.16.18605.0
+    display_name: Falcon
+
+homebrew_packages:
+  - _hosts: eng-ws-07|eng-ws-22
+    name: webp
+    path: /opt/homebrew/Cellar/webp/1.3.1
+    version: 1.3.1
+    type: formula
+    prefix: /opt/homebrew
+  - _hosts: eng-ws-07|eng-ws-22
+    name: node
+    path: /opt/homebrew/Cellar/node/20.5.0
+    version: 20.5.0
+    type: formula
+    prefix: /opt/homebrew
+  - _hosts: eng-ws-22
+    name: awscli
+    path: /opt/homebrew/Cellar/awscli/2.17.18
+    version: 2.17.18
+    type: formula
+    prefix: /opt/homebrew
+
+# ---- Identity & inventory (generated from nodes.yaml; keep in step) ----
+# Tables listed in _replace drop the built-in profile rows: these hosts
+# report exactly what is written here (see the "Seeds" section of the top-level README.md).
+_replace: [users, groups, user_groups, logged_in_users, interface_addresses, usb_devices, chrome_extensions, platform_info, last]
+chrome_extensions:
+- _hosts: eng-ws-07
+  browser_type: chrome
+  uid: "501"
+  name: Google Docs Offline
+  profile: Person 1
+  identifier: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+  version: "1.83.1"
+  default_locale: en
+  author: Google
+  persistent: "0"
+  path: /Users/m.delgado/Library/Application Support/Google/Chrome/Default/Extensions/ghbmnnjooekpmoecnnnilnnbdlolhkhi/1.83.1_0
+  permissions: alarms,storage,unlimitedStorage
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: eng-ws-07
+  browser_type: chrome
+  uid: "501"
+  name: 1Password – Password Manager
+  profile: Person 1
+  identifier: aeblfdkhhhdcdjpifhhbdiojplfjncoa
+  version: "8.10.46"
+  default_locale: en
+  author: AgileBits
+  persistent: "0"
+  path: /Users/m.delgado/Library/Application Support/Google/Chrome/Default/Extensions/aeblfdkhhhdcdjpifhhbdiojplfjncoa/8.10.46_0
+  permissions: activeTab,alarms,contextMenus,idle,nativeMessaging,notifications,privacy,scripting,storage,tabs,webNavigation,webRequest,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: eng-ws-07
+  browser_type: chrome
+  uid: "501"
+  name: React Developer Tools
+  profile: Person 1
+  identifier: fmkadmapgofadopljbjfkapdkoienihi
+  version: "5.3.1"
+  default_locale: en
+  author: Meta
+  persistent: "0"
+  path: /Users/m.delgado/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/5.3.1_0
+  permissions: storage,scripting,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: eng-ws-22
+  browser_type: chrome
+  uid: "501"
+  name: Google Docs Offline
+  profile: Person 1
+  identifier: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+  version: "1.83.1"
+  default_locale: en
+  author: Google
+  persistent: "0"
+  path: /Users/r.okonkwo/Library/Application Support/Google/Chrome/Default/Extensions/ghbmnnjooekpmoecnnnilnnbdlolhkhi/1.83.1_0
+  permissions: alarms,storage,unlimitedStorage
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: eng-ws-22
+  browser_type: chrome
+  uid: "501"
+  name: 1Password – Password Manager
+  profile: Person 1
+  identifier: aeblfdkhhhdcdjpifhhbdiojplfjncoa
+  version: "8.10.46"
+  default_locale: en
+  author: AgileBits
+  persistent: "0"
+  path: /Users/r.okonkwo/Library/Application Support/Google/Chrome/Default/Extensions/aeblfdkhhhdcdjpifhhbdiojplfjncoa/8.10.46_0
+  permissions: activeTab,alarms,contextMenus,idle,nativeMessaging,notifications,privacy,scripting,storage,tabs,webNavigation,webRequest,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: eng-ws-22
+  browser_type: chrome
+  uid: "501"
+  name: React Developer Tools
+  profile: Person 1
+  identifier: fmkadmapgofadopljbjfkapdkoienihi
+  version: "5.3.1"
+  default_locale: en
+  author: Meta
+  persistent: "0"
+  path: /Users/r.okonkwo/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/5.3.1_0
+  permissions: storage,scripting,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+groups:
+- gid: "0"
+  gid_signed: "0"
+  groupname: wheel
+- gid: "20"
+  gid_signed: "20"
+  groupname: staff
+- gid: "80"
+  gid_signed: "80"
+  groupname: admin
+interface_addresses:
+- interface: lo0
+  address: "127.0.0.1"
+  mask: "255.0.0.0"
+  broadcast: ""
+  point_to_point: ""
+  type: manual
+- _hosts: eng-ws-07
+  interface: en0
+  address: "10.14.41.107"
+  mask: "255.255.255.0"
+  broadcast: "10.14.41.255"
+  point_to_point: ""
+  type: dhcp
+- _hosts: eng-ws-22
+  interface: en0
+  address: "10.14.41.122"
+  mask: "255.255.255.0"
+  broadcast: "10.14.41.255"
+  point_to_point: ""
+  type: dhcp
+last:
+- _hosts: eng-ws-07
+  username: m.delgado
+  tty: console
+  pid: "412"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:5h}}"
+  host: ""
+- _hosts: eng-ws-22
+  username: r.okonkwo
+  tty: console
+  pid: "412"
+  type: "7"
+  type_name: user-process
+  time: "{{ago:7h}}"
+  host: ""
+logged_in_users:
+- _hosts: eng-ws-07
+  type: user
+  user: m.delgado
+  tty: console
+  host: ""
+  time: "{{ago:5h}}"
+  pid: "412"
+- _hosts: eng-ws-22
+  type: user
+  user: r.okonkwo
+  tty: console
+  host: ""
+  time: "{{ago:7h}}"
+  pid: "412"
+patches: []
+platform_info:
+- _hosts: eng-ws-07
+  vendor: Apple Inc.
+  version: "10151.121.1"
+  date: ""
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: eng-ws-22
+  vendor: Apple Inc.
+  version: "10151.121.1"
+  date: ""
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+process_events: []
+socket_events: []
+usb_devices:
+- _hosts: eng-ws-07
+  usb_address: "1"
+  usb_port: "1"
+  vendor: Yubico
+  vendor_id: "1050"
+  version: "5.43"
+  model: YubiKey OTP+FIDO+CCID
+  model_id: "0407"
+  serial: ""
+  class: "0"
+  subclass: "0"
+  protocol: "0"
+  removable: "1"
+- _hosts: eng-ws-22
+  usb_address: "1"
+  usb_port: "1"
+  vendor: Yubico
+  vendor_id: "1050"
+  version: "5.43"
+  model: YubiKey OTP+FIDO+CCID
+  model_id: "0407"
+  serial: ""
+  class: "0"
+  subclass: "0"
+  protocol: "0"
+  removable: "1"
+user_groups:
+- uid: "0"
+  gid: "0"
+- uid: "501"
+  gid: "20"
+- uid: "501"
+  gid: "80"
+users:
+- uid: "0"
+  gid: "0"
+  uid_signed: "0"
+  username: root
+  description: System Administrator
+  directory: /var/root
+  shell: /bin/sh
+  type: ""
+- uid: "248"
+  gid: "248"
+  uid_signed: "248"
+  username: _mbsetupuser
+  description: Setup User
+  directory: /var/setup
+  shell: /bin/bash
+  type: ""
+- _hosts: eng-ws-07
+  uid: "501"
+  gid: "20"
+  uid_signed: "501"
+  username: m.delgado
+  description: Engineer
+  directory: /Users/m.delgado
+  shell: /bin/zsh
+  type: ""
+- _hosts: eng-ws-22
+  uid: "501"
+  gid: "20"
+  uid_signed: "501"
+  username: r.okonkwo
+  description: Engineering lead
+  directory: /Users/r.okonkwo
+  shell: /bin/zsh
+  type: ""

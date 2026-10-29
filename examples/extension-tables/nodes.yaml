@@ -1,0 +1,18 @@
+# Two pinned hosts for the extension tables example.
+#
+#   phantomfleet --nodes-file examples/extension-tables/nodes.yaml \
+#                --extra-schema examples/extension-tables/schema.json \
+#                --catalog examples/extension-tables/catalog.yaml \
+#                --seeds-dir examples/extension-tables/seeds ...
+
+namespace: 6f1d0c0e-3b8a-5a52-9a1e-1d2c3b4a5e6f
+nodes:
+  - hostname: ws-01.lab.example.com
+    platform: windows
+    ip: 192.0.2.10
+    uuid_seed: example-ext/ws-01
+    primary_user: j.doe
+  - hostname: srv-01.lab.example.com
+    platform: ubuntu
+    ip: 192.0.2.20
+    uuid_seed: example-ext/srv-01

@@ -1,0 +1,344 @@
+# Example Corp: a fictional 15-host estate used as phantomfleet's sample fleet.
+#
+# Every node's identity is pinned: the uuid_seed + namespace give each host the
+# same osquery UUID on every run, so the server sees the same endpoints (and
+# keeps their tags) across restarts.
+#
+#   phantomfleet --nodes-file examples/examplecorp/nodes.yaml \
+#                --seeds-dir examples/examplecorp/seeds ...
+#
+# The PAN-OS appliances are enrolled as nodes too (platform "panos" answers from
+# the linux seed profile), so the vulnerable firewall shows up in the fleet.
+
+namespace: 2b7c1e44-9d3a-5f1e-8c6b-4a0e9f3d7a11
+nodes:
+  - hostname: web-prod-01.corp.example.com
+    platform: ubuntu
+    ip: 10.14.22.31
+    uuid_seed: examplecorp/web-prod-01
+    osquery_version: "5.24.0"
+    primary_user: svc_deploy
+    os:
+      name: "Ubuntu"
+      version: "22.04.4 LTS (Jammy Jellyfish)"
+      major: "22"
+      minor: "04"
+      patch: "0"
+      codename: "jammy"
+      platform: "ubuntu"
+      platform_like: "debian"
+    hardware:
+      vendor: "VMware, Inc."
+      model: "VMware7,1"
+      serial: "VMW-5c1a9e22"
+      cpu_brand: "Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz"
+      cpu_cores: 8
+      physical_memory: 17179869184
+  - hostname: web-prod-02.corp.example.com
+    platform: ubuntu
+    ip: 10.14.22.32
+    uuid_seed: examplecorp/web-prod-02
+    osquery_version: "5.24.0"
+    primary_user: svc_deploy
+    os:
+      name: "Ubuntu"
+      version: "22.04.4 LTS (Jammy Jellyfish)"
+      major: "22"
+      minor: "04"
+      patch: "0"
+      codename: "jammy"
+      platform: "ubuntu"
+      platform_like: "debian"
+    hardware:
+      vendor: "VMware, Inc."
+      model: "VMware7,1"
+      serial: "VMW-5c1a9e23"
+      cpu_brand: "Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz"
+      cpu_cores: 8
+      physical_memory: 17179869184
+  - hostname: db-primary.corp.example.com
+    platform: ubuntu
+    ip: 10.14.30.10
+    uuid_seed: examplecorp/db-primary
+    osquery_version: "5.24.0"
+    primary_user: svc_backup
+    os:
+      name: "Ubuntu"
+      version: "22.04.4 LTS (Jammy Jellyfish)"
+      major: "22"
+      minor: "04"
+      patch: "0"
+      codename: "jammy"
+      platform: "ubuntu"
+      platform_like: "debian"
+    hardware:
+      vendor: "Dell Inc."
+      model: "PowerEdge R650"
+      serial: "PF-3e7a91c4d2"
+      cpu_brand: "Intel(R) Xeon(R) Silver 4314 CPU @ 2.40GHz"
+      cpu_cores: 32
+      physical_memory: 274877906944
+  - hostname: fw-edge-01.corp.example.com
+    platform: panos
+    ip: 10.14.1.1
+    uuid_seed: examplecorp/fw-edge-01
+    osquery_version: "5.24.0"
+    os:
+      name: "PAN-OS"
+      version: "11.1.0"
+      major: "11"
+      minor: "1"
+      patch: "0"
+      platform: "panos"
+      platform_like: "linux"
+    hardware:
+      vendor: "Palo Alto Networks"
+      model: "PA-3220"
+      serial: "PF-8b05f2a6e1"
+      cpu_brand: "Intel(R) Xeon(R) CPU D-1557 @ 1.50GHz"
+      cpu_cores: 12
+      physical_memory: 34359738368
+  - hostname: vpn-gw-01.corp.example.com
+    platform: panos
+    ip: 10.14.1.20
+    uuid_seed: examplecorp/vpn-gw-01
+    osquery_version: "5.24.0"
+    os:
+      name: "PAN-OS"
+      version: "11.1.0"
+      major: "11"
+      minor: "1"
+      patch: "0"
+      platform: "panos"
+      platform_like: "linux"
+    hardware:
+      vendor: "Palo Alto Networks"
+      model: "PA-3220"
+      serial: "PF-8b05f2a6e2"
+      cpu_brand: "Intel(R) Xeon(R) CPU D-1557 @ 1.50GHz"
+      cpu_cores: 12
+      physical_memory: 34359738368
+  - hostname: dc-01.corp.example.com
+    platform: windows
+    ip: 10.14.5.10
+    uuid_seed: examplecorp/dc-01
+    osquery_version: "5.24.0"
+    os:
+      name: "Microsoft Windows Server 2022 Standard"
+      version: "10.0.20348"
+      major: "10"
+      minor: "0"
+      patch: "0"
+      build: "20348"
+      platform: "windows"
+      platform_like: "windows"
+    hardware:
+      vendor: "VMware, Inc."
+      model: "VMware7,1"
+      serial: "VMW-4d77b0a1"
+      cpu_brand: "Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz"
+      cpu_cores: 4
+      physical_memory: 17179869184
+  - hostname: file-srv-01.corp.example.com
+    platform: windows
+    ip: 10.14.5.40
+    uuid_seed: examplecorp/file-srv-01
+    osquery_version: "5.24.0"
+    primary_user: svc_backup
+    os:
+      name: "Microsoft Windows Server 2022 Standard"
+      version: "10.0.20348"
+      major: "10"
+      minor: "0"
+      patch: "0"
+      build: "20348"
+      platform: "windows"
+      platform_like: "windows"
+    hardware:
+      vendor: "VMware, Inc."
+      model: "VMware7,1"
+      serial: "VMW-4d77b0a4"
+      cpu_brand: "Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz"
+      cpu_cores: 8
+      physical_memory: 17179869184
+  - hostname: finance-ws-12.corp.example.com
+    platform: windows
+    ip: 10.14.40.112
+    uuid_seed: examplecorp/finance-ws-12
+    osquery_version: "5.24.0"
+    primary_user: a.harper
+    os:
+      name: "Microsoft Windows 11 Enterprise"
+      version: "10.0.22631"
+      major: "10"
+      minor: "0"
+      patch: "0"
+      build: "22631"
+      codename: "23H2"
+      platform: "windows"
+      platform_like: "windows"
+    hardware:
+      vendor: "Dell Inc."
+      model: "Latitude 7440"
+      serial: "EXC7440A12"
+      cpu_brand: "13th Gen Intel(R) Core(TM) i7-1365U"
+      cpu_cores: 12
+      physical_memory: 17179869184
+  - hostname: finance-ws-13.corp.example.com
+    platform: windows
+    ip: 10.14.40.113
+    uuid_seed: examplecorp/finance-ws-13
+    osquery_version: "5.24.0"
+    primary_user: s.novak
+    os:
+      name: "Microsoft Windows 11 Enterprise"
+      version: "10.0.22631"
+      major: "10"
+      minor: "0"
+      patch: "0"
+      build: "22631"
+      codename: "23H2"
+      platform: "windows"
+      platform_like: "windows"
+    hardware:
+      vendor: "Dell Inc."
+      model: "Latitude 7440"
+      serial: "EXC7440A13"
+      cpu_brand: "13th Gen Intel(R) Core(TM) i7-1365U"
+      cpu_cores: 12
+      physical_memory: 17179869184
+  - hostname: hr-ws-03.corp.example.com
+    platform: windows
+    ip: 10.14.42.103
+    uuid_seed: examplecorp/hr-ws-03
+    osquery_version: "5.24.0"
+    primary_user: j.chen
+    os:
+      name: "Microsoft Windows 11 Enterprise"
+      version: "10.0.22631"
+      major: "10"
+      minor: "0"
+      patch: "0"
+      build: "22631"
+      codename: "23H2"
+      platform: "windows"
+      platform_like: "windows"
+    hardware:
+      vendor: "LENOVO"
+      model: "ThinkPad T14 Gen 4"
+      serial: "PF-c41d7e0b93"
+      cpu_brand: "13th Gen Intel(R) Core(TM) i5-1345U"
+      cpu_cores: 12
+      physical_memory: 17179869184
+  - hostname: sales-ws-21.corp.example.com
+    platform: windows
+    ip: 10.14.43.121
+    uuid_seed: examplecorp/sales-ws-21
+    osquery_version: "5.24.0"
+    primary_user: p.ivanova
+    os:
+      name: "Microsoft Windows 11 Enterprise"
+      version: "10.0.22631"
+      major: "10"
+      minor: "0"
+      patch: "0"
+      build: "22631"
+      codename: "23H2"
+      platform: "windows"
+      platform_like: "windows"
+    hardware:
+      vendor: "HP"
+      model: "HP EliteBook 840 G10"
+      serial: "PF-5f9a26d8c7"
+      cpu_brand: "13th Gen Intel(R) Core(TM) i5-1335U"
+      cpu_cores: 12
+      physical_memory: 17179869184
+  - hostname: eng-ws-07.corp.example.com
+    platform: darwin
+    ip: 10.14.41.107
+    uuid_seed: examplecorp/eng-ws-07
+    osquery_version: "5.24.0"
+    primary_user: m.delgado
+    os:
+      name: "macOS"
+      version: "14.5"
+      major: "14"
+      minor: "5"
+      patch: "0"
+      build: "23F79"
+      platform: "darwin"
+      platform_like: "darwin"
+      arch: "arm64"
+    hardware:
+      vendor: "Apple Inc."
+      model: "Mac15,3"
+      serial: "C02EXC07MBP"
+      cpu_brand: "Apple M3"
+      cpu_cores: 8
+      physical_memory: 25769803776
+  - hostname: eng-ws-22.corp.example.com
+    platform: darwin
+    ip: 10.14.41.122
+    uuid_seed: examplecorp/eng-ws-22
+    osquery_version: "5.24.0"
+    primary_user: r.okonkwo
+    os:
+      name: "macOS"
+      version: "14.5"
+      major: "14"
+      minor: "5"
+      patch: "0"
+      build: "23F79"
+      platform: "darwin"
+      platform_like: "darwin"
+      arch: "arm64"
+    hardware:
+      vendor: "Apple Inc."
+      model: "Mac15,3"
+      serial: "C02EXC22MBP"
+      cpu_brand: "Apple M3"
+      cpu_cores: 8
+      physical_memory: 25769803776
+  - hostname: build-runner-03.corp.example.com
+    platform: ubuntu
+    ip: 10.14.50.13
+    uuid_seed: examplecorp/build-runner-03
+    osquery_version: "5.13.1"
+    primary_user: svc_deploy
+    os:
+      name: "Ubuntu"
+      version: "24.04 LTS (Noble Numbat)"
+      major: "24"
+      minor: "04"
+      patch: "0"
+      codename: "noble"
+      platform: "ubuntu"
+      platform_like: "debian"
+    hardware:
+      vendor: "VMware, Inc."
+      model: "VMware7,1"
+      serial: "VMW-6e0b3c13"
+      cpu_brand: "Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz"
+      cpu_cores: 16
+      physical_memory: 34359738368
+  - hostname: jump-01.corp.example.com
+    platform: ubuntu
+    ip: 10.14.2.5
+    uuid_seed: examplecorp/jump-01
+    osquery_version: "5.24.0"
+    os:
+      name: "Ubuntu"
+      version: "22.04.4 LTS (Jammy Jellyfish)"
+      major: "22"
+      minor: "04"
+      patch: "0"
+      codename: "jammy"
+      platform: "ubuntu"
+      platform_like: "debian"
+    hardware:
+      vendor: "VMware, Inc."
+      model: "VMware7,1"
+      serial: "VMW-3a9f0e05"
+      cpu_brand: "Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz"
+      cpu_cores: 2
+      physical_memory: 4294967296

@@ -1,0 +1,41 @@
+# Views: extension tables computed per statement. The statement's
+# `column = literal` constraints are bound as :column parameters (NULL when the
+# statement does not constrain the column), and each view echoes its inputs as
+# columns so the statement's own WHERE keeps the rows.
+_views:
+  # Downloads per user and source host. Inputs: user (all users when
+  # unconstrained) and min_bytes (default 0: every download counts).
+  example_ext_download_summary: |
+    WITH args AS (SELECT :user AS u, COALESCE(:min_bytes, 0) AS m)
+    SELECT d.user AS user, args.m AS min_bytes, d.source_host AS source_host,
+           COUNT(*) AS downloads, SUM(d.bytes) AS total_bytes,
+           json_group_array(DISTINCT d.verdict) AS verdicts
+    FROM example_ext_downloads d JOIN args
+    WHERE (args.u IS NULL OR d.user = args.u) AND d.bytes >= args.m
+    GROUP BY d.user, d.source_host
+    ORDER BY d.user, d.source_host
+
+  # Disk usage below a folder, like `du`: the folder (level 0) and the
+  # folders under it down to max_depth (default 2), each with its own size,
+  # the size of everything beneath it, and its number of subfolders.
+  example_ext_folder_sizes: |
+    WITH RECURSIVE
+      args AS (SELECT :folder AS root, COALESCE(:max_depth, 2) AS depth),
+      below(top, folder_id) AS (
+        SELECT folder_id, folder_id FROM example_ext_folders
+        UNION ALL
+        SELECT below.top, f.folder_id FROM example_ext_folders f JOIN below ON f.parent = below.folder_id
+      ),
+      walk(folder_id, level) AS (
+        SELECT root, 0 FROM args WHERE root IS NOT NULL
+        UNION ALL
+        SELECT f.folder_id, walk.level + 1 FROM example_ext_folders f JOIN walk ON f.parent = walk.folder_id
+        JOIN args WHERE walk.level < args.depth
+      )
+    SELECT args.root AS folder, args.depth AS max_depth, f.folder_id, f.name, walk.level,
+           f.bytes AS own_bytes,
+           (SELECT SUM(x.bytes) FROM below b JOIN example_ext_folders x ON x.folder_id = b.folder_id
+              WHERE b.top = f.folder_id) AS total_bytes,
+           (SELECT COUNT(*) FROM example_ext_folders s WHERE s.parent = f.folder_id) AS subfolders
+    FROM walk JOIN example_ext_folders f ON f.folder_id = walk.folder_id JOIN args
+    ORDER BY walk.level, f.folder_id

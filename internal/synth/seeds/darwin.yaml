@@ -1,0 +1,246 @@
+# Curated, realistic rows for a macOS (darwin) node.
+
+os_version:
+  - name: macOS
+    version: "15.6.1"
+    major: "15"
+    minor: "6"
+    patch: "1"
+    build: "24G90"
+    platform: darwin
+    platform_like: darwin
+    codename: Sequoia
+    arch: arm64
+
+system_info:
+  - hostname: "{{hostname}}"
+    uuid: "{{uuid}}"
+    computer_name: "{{hostname}}"
+    local_hostname: "{{hostname}}"
+    cpu_brand: "Apple M2 Pro"
+    cpu_type: arm64e
+    cpu_physical_cores: "10"
+    cpu_logical_cores: "10"
+    physical_memory: "17179869184"
+    hardware_vendor: "Apple Inc."
+    hardware_model: "Mac14,12"
+    hardware_serial: "PF-{{hex:10}}"
+
+osquery_info:
+  - uuid: "{{uuid}}"
+    version: "{{version}}"
+    pid: "884"
+    instance_id: "{{uuid}}"
+    config_hash: "7155bb2b98162fa5641d340e03a38d0502df34f0"
+    config_valid: "1"
+    build_platform: darwin
+    build_distro: "10.15"
+    watcher: "883"
+
+kernel_info:
+  - version: "24.6.0"
+    arguments: ""
+    path: "/System/Library/Kernels/kernel"
+    device: "/dev/disk3s1s1"
+
+uptime:
+  - days: "2"
+    hours: "11"
+    minutes: "4"
+    seconds: "52"
+    total_seconds: "212692"
+
+logged_in_users:
+  - user: "{{username}}"
+    host: ""
+    tty: console
+    type: user
+    time: "1716200000"
+
+users:
+  - uid: "0"
+    gid: "0"
+    username: root
+    description: "System Administrator"
+    directory: /var/root
+    shell: /bin/sh
+  - uid: "501"
+    gid: "20"
+    username: "{{username}}"
+    description: "{{username}}"
+    directory: "/Users/{{username}}"
+    shell: /bin/zsh
+  - uid: "248"
+    gid: "248"
+    username: _mbsetupuser
+    directory: /var/empty
+    shell: /usr/bin/false
+
+processes:
+  - pid: "1"
+    name: launchd
+    path: /sbin/launchd
+    cmdline: "/sbin/launchd"
+    state: R
+    uid: "0"
+    parent: "0"
+  - pid: "884"
+    name: osqueryd
+    path: /usr/local/bin/osqueryd
+    cmdline: "/usr/local/bin/osqueryd --flagfile=/var/osquery/osquery.flags"
+    state: S
+    uid: "0"
+    parent: "1"
+  - pid: "412"
+    name: WindowServer
+    path: /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer
+    state: R
+    uid: "88"
+    parent: "1"
+  - pid: "623"
+    name: Finder
+    path: /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder
+    state: S
+    uid: "501"
+    parent: "1"
+  - pid: "1102"
+    name: Safari
+    path: /Applications/Safari.app/Contents/MacOS/Safari
+    state: S
+    uid: "501"
+    parent: "1"
+
+listening_ports:
+  - pid: "884"
+    port: "9000"
+    protocol: "6"
+    family: "2"
+    address: "127.0.0.1"
+  - pid: "1"
+    port: "22"
+    protocol: "6"
+    family: "2"
+    address: "0.0.0.0"
+
+interface_addresses:
+  - interface: en0
+    address: "{{ip}}"
+    mask: "255.255.255.0"
+    broadcast: "10.0.0.255"
+    type: dhcp
+  - interface: lo0
+    address: "127.0.0.1"
+    mask: "255.0.0.0"
+    type: static
+
+# --- persistence ---
+launchd:
+  - path: "/Library/LaunchDaemons/com.osquery.osqueryd.plist"
+    name: "com.osquery.osqueryd.plist"
+    label: "com.osquery.osqueryd"
+    program: "/usr/local/bin/osqueryd"
+    run_at_load: "true"
+    keep_alive: "true"
+    program_arguments: "/usr/local/bin/osqueryd --flagfile=/var/osquery/osquery.flags"
+    disabled: "false"
+  - path: "/Users/{{username}}/Library/LaunchAgents/com.unknown.updater.plist"
+    name: "com.unknown.updater.plist"
+    label: "com.unknown.updater"
+    program: "/Users/{{username}}/Library/Application Support/.updater/run"
+    run_at_load: "true"
+    keep_alive: "true"
+    disabled: "false"
+
+startup_items:
+  - name: "Dropbox"
+    path: "/Applications/Dropbox.app"
+    args: ""
+    type: "Login Item"
+    source: "/Users/{{username}}/Library/Preferences/com.apple.loginitems.plist"
+    status: enabled
+    username: "{{username}}"
+
+crontab:
+  - event: ""
+    minute: "30"
+    hour: "2"
+    day_of_month: "*"
+    month: "*"
+    day_of_week: "*"
+    command: "/usr/local/bin/backup.sh"
+    path: "/usr/lib/cron/tabs/{{username}}"
+
+apps:
+  - name: "Safari.app"
+    path: "/Applications/Safari.app"
+    bundle_identifier: "com.apple.Safari"
+    bundle_short_version: "17.4.1"
+    bundle_version: "19618.1.15.11.14"
+    display_name: "Safari"
+    last_opened_time: "1716100000"
+    applescript_enabled: "1"
+  - name: "Slack.app"
+    path: "/Applications/Slack.app"
+    bundle_identifier: "com.tinyspeck.slackmacgap"
+    bundle_short_version: "4.37.94"
+    display_name: "Slack"
+  - name: "Google Chrome.app"
+    path: "/Applications/Google Chrome.app"
+    bundle_identifier: "com.google.Chrome"
+    bundle_short_version: "124.0.6367.119"
+    display_name: "Google Chrome"
+  # Patterned template for the rest of the installed apps.
+  - name: "{{choice:Notes|Calendar|Terminal|Xcode|Spotify|Zoom|1Password|Docker|VLC|Notion}}.app"
+    path: "/Applications/{{word}}.app"
+    bundle_identifier: "com.{{word}}.{{word}}"
+    bundle_short_version: "{{int:1..15}}.{{int:0..20}}.{{int:0..9}}"
+    display_name: "{{word}}"
+    last_opened_time: "{{unixtime}}"
+    applescript_enabled: "{{bool}}"
+
+homebrew_packages:
+  - name: openssl@3
+    version: "3.3.0"
+    path: "/opt/homebrew/Cellar/openssl@3/3.3.0"
+    type: formula
+  - name: git
+    version: "2.45.1"
+    path: "/opt/homebrew/Cellar/git/2.45.1"
+    type: formula
+
+# The root volume always exists (servers read free space from it); the
+# template pads the table with the other APFS system volumes.
+mounts:
+  - device: /dev/disk3s1s1
+    device_alias: /dev/disk3s1s1
+    path: /
+    type: apfs
+    blocks_size: "4096"
+    blocks: "121008700"
+    blocks_free: "80123456"
+    blocks_available: "80123456"
+    inodes: "4294967295"
+    inodes_free: "4290000000"
+    flags: ro,local,rootfs,journaled
+  - device: /dev/disk3s5
+    device_alias: /dev/disk3s5
+    path: /System/Volumes/Data
+    type: apfs
+    blocks_size: "4096"
+    blocks: "121008700"
+    blocks_free: "80123456"
+    blocks_available: "80123456"
+    inodes: "4294967295"
+    inodes_free: "4288000000"
+    flags: rw,local,journaled,nobrowse
+  - device: "/dev/disk3s{{int:2..6}}"
+    device_alias: ""
+    path: "/System/Volumes/{{choice:VM|Preboot|Update|xarts|iSCPreboot|Hardware}}"
+    type: apfs
+    blocks_size: "4096"
+    blocks: "121008700"
+    blocks_free: "80123456"
+    blocks_available: "80123456"
+    inodes: "4294967295"
+    inodes_free: "4290000000"
+    flags: rw,local,journaled,nobrowse

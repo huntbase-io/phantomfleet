@@ -1,0 +1,387 @@
+# Curated, realistic rows for a Windows node.
+
+os_version:
+  - name: "Microsoft Windows 11 Pro"
+    version: "10.0.26100"
+    major: "10"
+    minor: "0"
+    patch: "0"
+    build: "26100"
+    platform: windows
+    platform_like: windows
+    codename: ""
+    arch: x86_64
+
+system_info:
+  - hostname: "{{hostname}}"
+    uuid: "{{uuid}}"
+    computer_name: "{{hostname}}"
+    local_hostname: "{{hostname}}"
+    cpu_brand: "11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz"
+    cpu_type: x86_64
+    cpu_physical_cores: "4"
+    cpu_logical_cores: "8"
+    physical_memory: "17179869184"
+    hardware_vendor: "Dell Inc."
+    hardware_model: "Latitude 7420"
+    hardware_serial: "PF-{{hex:10}}"
+
+osquery_info:
+  - uuid: "{{uuid}}"
+    version: "{{version}}"
+    pid: "4812"
+    instance_id: "{{uuid}}"
+    config_hash: "7155bb2b98162fa5641d340e03a38d0502df34f0"
+    config_valid: "1"
+    build_platform: windows
+    build_distro: 10
+    watcher: "4808"
+
+kernel_info:
+  - version: "10.0.26100"
+    arguments: ""
+    path: "C:\\Windows\\System32\\ntoskrnl.exe"
+    device: ""
+
+uptime:
+  - days: "1"
+    hours: "18"
+    minutes: "9"
+    seconds: "33"
+    total_seconds: "151773"
+
+logged_in_users:
+  - user: "{{username}}"
+    host: "{{hostname}}"
+    tty: console
+    type: active
+    time: "1716200000"
+
+users:
+  - uid: "544"
+    gid: "544"
+    username: Administrator
+    description: "Built-in account for administering the computer/domain"
+    directory: "C:\\Users\\Administrator"
+    shell: ""
+  - uid: "1001"
+    gid: "513"
+    username: "{{username}}"
+    description: "{{username}}"
+    directory: "C:\\Users\\{{username}}"
+    shell: ""
+  - uid: "503"
+    gid: "503"
+    username: "DefaultAccount"
+    directory: ""
+    shell: ""
+
+processes:
+  - pid: "4"
+    name: System
+    path: ""
+    cmdline: ""
+    state: ""
+    uid: ""
+    parent: "0"
+  - pid: "388"
+    name: smss.exe
+    path: "C:\\Windows\\System32\\smss.exe"
+    state: ""
+    parent: "4"
+  - pid: "612"
+    name: csrss.exe
+    path: "C:\\Windows\\System32\\csrss.exe"
+    parent: "604"
+  - pid: "728"
+    name: services.exe
+    path: "C:\\Windows\\System32\\services.exe"
+    parent: "612"
+  - pid: "1024"
+    name: svchost.exe
+    path: "C:\\Windows\\System32\\svchost.exe"
+    cmdline: "C:\\Windows\\system32\\svchost.exe -k netsvcs -p"
+    parent: "728"
+  - pid: "3344"
+    name: explorer.exe
+    path: "C:\\Windows\\explorer.exe"
+    parent: "3300"
+  - pid: "4812"
+    name: osqueryd.exe
+    path: "C:\\Program Files\\osquery\\osqueryd\\osqueryd.exe"
+    cmdline: "\"C:\\Program Files\\osquery\\osqueryd\\osqueryd.exe\" --flagfile=..."
+    parent: "728"
+
+programs:
+  - name: "Google Chrome"
+    version: "124.0.6367.119"
+    publisher: "Google LLC"
+    install_location: "C:\\Program Files\\Google\\Chrome\\Application"
+  - name: "7-Zip 23.01 (x64)"
+    version: "23.01"
+    publisher: "Igor Pavlov"
+    install_location: "C:\\Program Files\\7-Zip"
+  - name: "Microsoft Edge"
+    version: "124.0.2478.97"
+    publisher: "Microsoft Corporation"
+    install_location: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application"
+  - name: "Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.40.33810"
+    version: "14.40.33810.0"
+    publisher: "Microsoft Corporation"
+    install_location: ""
+  - name: "Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.40.33810"
+    version: "14.40.33810.0"
+    publisher: "Microsoft Corporation"
+    install_location: ""
+  - name: "Microsoft Teams"
+    version: "25241.203.3054.1953"
+    publisher: "Microsoft Corporation"
+    install_location: ""
+  - name: "Microsoft OneDrive"
+    version: "25.164.0824.0003"
+    publisher: "Microsoft Corporation"
+    install_location: "C:\\Program Files\\Microsoft OneDrive"
+  - name: "Microsoft 365 Apps for enterprise - en-us"
+    version: "16.0.18925.20184"
+    publisher: "Microsoft Corporation"
+    install_location: "C:\\Program Files\\Microsoft Office"
+  - name: "Microsoft Update Health Tools"
+    version: "5.72.0.0"
+    publisher: "Microsoft Corporation"
+    install_location: ""
+  - name: "Microsoft Edge WebView2 Runtime"
+    version: "141.0.3537.71"
+    publisher: "Microsoft Corporation"
+    install_location: "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application"
+  - name: "PowerShell 7-x64"
+    version: "7.5.3.0"
+    publisher: "Microsoft Corporation"
+    install_location: "C:\\Program Files\\PowerShell\\7\\"
+  - name: "Mozilla Firefox (x64 en-US)"
+    version: "143.0.4"
+    publisher: "Mozilla"
+    install_location: "C:\\Program Files\\Mozilla Firefox"
+  - name: "Mozilla Maintenance Service"
+    version: "143.0.4"
+    publisher: "Mozilla"
+    install_location: ""
+  - name: "Zoom Workplace (64-bit)"
+    version: "6.6.1.15968"
+    publisher: "Zoom Communications, Inc."
+    install_location: ""
+  - name: "Adobe Acrobat (64-bit)"
+    version: "25.001.20756"
+    publisher: "Adobe"
+    install_location: "C:\\Program Files\\Adobe\\Acrobat DC\\"
+  - name: "Notepad++ (64-bit x64)"
+    version: "8.8.5"
+    publisher: "Notepad++ Team"
+    install_location: "C:\\Program Files\\Notepad++"
+  - name: "Git"
+    version: "2.51.0"
+    publisher: "The Git Development Community"
+    install_location: "C:\\Program Files\\Git\\"
+  - name: "Python 3.12.10 (64-bit)"
+    version: "3.12.10150.0"
+    publisher: "Python Software Foundation"
+    install_location: ""
+  - name: "Microsoft Visual Studio Code"
+    version: "1.105.1"
+    publisher: "Microsoft Corporation"
+    install_location: "C:\\Program Files\\Microsoft VS Code\\"
+  - name: "VLC media player"
+    version: "3.0.21"
+    publisher: "VideoLAN"
+    install_location: "C:\\Program Files\\VideoLAN\\VLC"
+  - name: "Intel(R) Graphics Driver"
+    version: "31.0.101.5592"
+    publisher: "Intel Corporation"
+    install_location: ""
+  - name: "Realtek Audio Driver"
+    version: "6.0.9600.1"
+    publisher: "Realtek Semiconductor Corp."
+    install_location: ""
+  - name: "Intel(R) Wireless Bluetooth(R)"
+    version: "23.120.0.3"
+    publisher: "Intel Corporation"
+    install_location: ""
+  - name: "Dell SupportAssist"
+    version: "4.8.2.29006"
+    publisher: "Dell Inc."
+    install_location: ""
+  - name: "Dell Command Update"
+    version: "5.5.0"
+    publisher: "Dell Inc."
+    install_location: ""
+  - name: "Windows PC Health Check"
+    version: "3.6.2204.08001"
+    publisher: "Microsoft Corporation"
+    install_location: ""
+  - name: "Microsoft Intune Management Extension"
+    version: "1.92.102.0"
+    publisher: "Microsoft Corporation"
+    install_location: ""
+  - name: "Cisco Secure Client - AnyConnect VPN"
+    version: "5.1.10.233"
+    publisher: "Cisco Systems, Inc."
+    install_location: ""
+
+listening_ports:
+  - pid: "4812"
+    port: "9000"
+    protocol: "6"
+    family: "2"
+    address: "127.0.0.1"
+  - pid: "924"
+    port: "3389"
+    protocol: "6"
+    family: "2"
+    address: "0.0.0.0"
+  - pid: "4"
+    port: "445"
+    protocol: "6"
+    family: "2"
+    address: "0.0.0.0"
+
+interface_addresses:
+  - interface: "Ethernet"
+    address: "{{ip}}"
+    mask: "255.255.255.0"
+    broadcast: "10.0.0.255"
+    type: dhcp
+  - interface: "Loopback Pseudo-Interface 1"
+    address: "127.0.0.1"
+    mask: "255.0.0.0"
+    type: static
+
+# --- persistence ---
+services:
+  - name: "osqueryd"
+    display_name: "osquery daemon service"
+    status: "RUNNING"
+    pid: "4812"
+    start_type: "AUTO_START"
+    path: "C:\\Program Files\\osquery\\osqueryd\\osqueryd.exe"
+    service_type: "OWN_PROCESS"
+    description: "osquery host monitoring daemon"
+  - name: "Spooler"
+    display_name: "Print Spooler"
+    status: "RUNNING"
+    pid: "1820"
+    start_type: "AUTO_START"
+    path: "C:\\Windows\\System32\\spoolsv.exe"
+    service_type: "OWN_PROCESS"
+  - name: "WinDefend"
+    display_name: "Microsoft Defender Antivirus Service"
+    status: "RUNNING"
+    pid: "3120"
+    start_type: "AUTO_START"
+    path: "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\MsMpEng.exe"
+  # Patterned template for the rest of the service list.
+  - name: "{{choice:WSearch|Themes|Dnscache|LanmanServer|EventLog|Schedule|BITS|wuauserv|Dhcp|W32Time}}"
+    display_name: "{{words}}"
+    status: "{{choice:RUNNING|STOPPED}}"
+    pid: "{{int:400..9000}}"
+    start_type: "{{choice:AUTO_START|DEMAND_START|DISABLED}}"
+    path: "C:\\Windows\\System32\\svchost.exe -k {{word}}"
+    service_type: "SHARE_PROCESS"
+
+scheduled_tasks:
+  - name: "GoogleUpdateTaskMachineUA"
+    action: "C:\\Program Files (x86)\\Google\\Update\\GoogleUpdate.exe /ua /installsource scheduler"
+    path: "\\GoogleUpdateTaskMachineUA"
+    enabled: "1"
+    state: "ready"
+    last_run_time: "1716100000"
+    next_run_time: "1716186400"
+    hidden: "0"
+  - name: "UpdaterTask"
+    action: "C:\\Users\\{{username}}\\AppData\\Roaming\\.cache\\svc.exe"
+    path: "\\UpdaterTask"
+    enabled: "1"
+    state: "ready"
+    hidden: "1"
+  # Patterned template for the bulk of scheduled tasks.
+  - name: "{{choice:OneDriveStandaloneUpdater|MicrosoftEdgeUpdateTaskMachine|Office Automatic Updates|Adobe Acrobat Update|.NET Framework NGEN}}"
+    action: "C:\\Program Files\\{{word}}\\{{word}}.exe"
+    path: "\\Microsoft\\Windows\\{{word}}"
+    enabled: "{{bool}}"
+    state: "{{choice:ready|running|disabled}}"
+    last_run_time: "{{unixtime}}"
+    next_run_time: "{{unixtime}}"
+    hidden: "{{bool}}"
+
+startup_items:
+  - name: "OneDrive"
+    path: "C:\\Users\\{{username}}\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe"
+    args: "/background"
+    type: "Startup Item"
+    source: "HKEY_USERS\\...\\Run"
+    status: enabled
+    username: "{{username}}"
+
+autoexec:
+  - path: "C:\\Windows\\System32\\userinit.exe"
+    name: "userinit.exe"
+    source: "winlogon"
+
+chocolatey_packages:
+  - name: "googlechrome"
+    version: "124.0.6367.119"
+    summary: "Google Chrome"
+    author: "Google Inc."
+    license: "https://www.google.com/chrome/terms/"
+    path: "C:\\ProgramData\\chocolatey\\lib\\googlechrome"
+  - name: "7zip"
+    version: "23.1.0"
+    summary: "7-Zip"
+    author: "Igor Pavlov"
+
+# --- patch / vulnerability visibility (real Windows osquery table) ---
+patches:
+  - hotfix_id: "KB5037771"
+    description: "Security Update"
+    installed_by: "NT AUTHORITY\\SYSTEM"
+    install_date: "5/14/2024"
+  - hotfix_id: "KB5037959"
+    description: "Update"
+    installed_by: "NT AUTHORITY\\SYSTEM"
+    install_date: "5/29/2024"
+
+# The system drive always exists (servers read free space from it).
+logical_drives:
+  - device_id: "C:"
+    type: Local Disk
+    description: Local Fixed Disk
+    free_space: "183463215104"
+    size: "511101108224"
+    file_system: NTFS
+    boot_partition: "1"
+
+# Version details servers read from the registry (display version, update
+# build revision, installation type).
+registry:
+  - key: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
+    path: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\DisplayVersion'
+    name: DisplayVersion
+    type: REG_SZ
+    data: 24H2
+    mtime: "1759276800"
+  - key: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
+    path: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UBR'
+    name: UBR
+    type: REG_DWORD
+    data: "6899"
+    mtime: "1759276800"
+  - key: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
+    path: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\InstallationType'
+    name: InstallationType
+    type: REG_SZ
+    data: Client
+    mtime: "1759276800"
+  - key: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
+    path: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProductName'
+    name: ProductName
+    type: REG_SZ
+    data: Windows 10 Pro
+    mtime: "1759276800"

@@ -1,0 +1,49 @@
+name: phantomfleet
+
+# Simulates N osquery hosts enrolling into an osquery TLS server and sending
+# status/result logs, config polls and distributed-query traffic.
+#
+#   cp .env.example .env      # set PHANTOMFLEET_URL / _ENV / _SECRET
+#   docker compose up -d      # pulls ghcr.io/huntbase-io/phantomfleet
+#   docker compose logs -f
+#   docker compose down       # node identities persist in the named volume
+#
+# To build the image from this checkout instead of pulling it:
+#   docker compose up -d --build
+
+services:
+  phantomfleet:
+    image: ${PHANTOMFLEET_IMAGE:-ghcr.io/huntbase-io/phantomfleet:latest}
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-UTC}
+      # Read by phantomfleet directly, so the secret never appears in argv.
+      PHANTOMFLEET_SECRET: ${PHANTOMFLEET_SECRET:?set PHANTOMFLEET_SECRET in .env}
+    command:
+      - --url=${PHANTOMFLEET_URL:?set PHANTOMFLEET_URL in .env}
+      - --env=${PHANTOMFLEET_ENV:-}
+      - --flavor=${PHANTOMFLEET_FLAVOR:-osctrl}
+      - --nodes=${PHANTOMFLEET_NODES:-5}
+      - --enroll-concurrency=${PHANTOMFLEET_ENROLL_CONCURRENCY:-50}
+      - --status=${PHANTOMFLEET_STATUS_INTERVAL:-60}
+      - --result=${PHANTOMFLEET_RESULT_INTERVAL:-60}
+      - --config=${PHANTOMFLEET_CONFIG_INTERVAL:-45}
+      - --query=${PHANTOMFLEET_QUERY_INTERVAL:-30}
+      - --insecure=${PHANTOMFLEET_INSECURE:-false}
+      # Answer distributed queries with synthetic rows (no osqueryi needed).
+      - --fake-results=${PHANTOMFLEET_FAKE_RESULTS:-true}
+      - --explain=${PHANTOMFLEET_EXPLAIN:-false}
+      - --mode=${PHANTOMFLEET_MODE:-summary}
+      # Persist node identities so restarts resume the same simulated fleet.
+      - --state=/data/phantomfleet_state.json
+      # Layer any YAML dropped in ./seeds over the built-in fake data (no rebuild).
+      - --seeds-dir=/seeds
+    volumes:
+      - phantomfleet-state:/data
+      - ./seeds:/seeds:ro
+
+volumes:
+  phantomfleet-state:

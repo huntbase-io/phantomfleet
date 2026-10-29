@@ -1,0 +1,47 @@
+name: phantomfleet-examplecorp
+
+# The Example Corp sample fleet: 15 hosts with pinned identities
+# (../examples/examplecorp/nodes.yaml) answering queries from the Example Corp
+# seeds (../examples/examplecorp/seeds) layered over the built-in fake data.
+#
+#   cp .env.example .env      # set PHANTOMFLEET_URL / _ENV / _SECRET
+#   docker compose -f docker-compose.examplecorp.yml up -d
+#   docker compose -f docker-compose.examplecorp.yml logs -f
+#
+# Add --build to build the image from this checkout instead of pulling it.
+
+services:
+  phantomfleet:
+    image: ${PHANTOMFLEET_IMAGE:-ghcr.io/huntbase-io/phantomfleet:latest}
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-UTC}
+      # Read by phantomfleet directly, so the secret never appears in argv.
+      PHANTOMFLEET_SECRET: ${PHANTOMFLEET_SECRET:?set PHANTOMFLEET_SECRET in .env}
+    command:
+      - --url=${PHANTOMFLEET_URL:?set PHANTOMFLEET_URL in .env}
+      - --env=${PHANTOMFLEET_ENV:-}
+      - --flavor=${PHANTOMFLEET_FLAVOR:-osctrl}
+      - --nodes-file=/examplecorp/nodes.yaml
+      - --seeds-dir=/examplecorp/seeds
+      # --nodes only adds random hosts beyond the pinned ones; 15 = pinned only.
+      - --nodes=15
+      - --status=${PHANTOMFLEET_STATUS_INTERVAL:-60}
+      - --result=${PHANTOMFLEET_RESULT_INTERVAL:-60}
+      - --config=${PHANTOMFLEET_CONFIG_INTERVAL:-45}
+      # Poll for distributed queries a little faster so live queries answer quickly.
+      - --query=${PHANTOMFLEET_QUERY_INTERVAL:-15}
+      - --insecure=${PHANTOMFLEET_INSECURE:-false}
+      - --fake-results=true
+      - --explain=${PHANTOMFLEET_EXPLAIN:-false}
+      - --mode=${PHANTOMFLEET_MODE:-summary}
+      - --state=/data/phantomfleet_state.json
+    volumes:
+      - phantomfleet-examplecorp-state:/data
+      - ../examples/examplecorp:/examplecorp:ro
+
+volumes:
+  phantomfleet-examplecorp-state:

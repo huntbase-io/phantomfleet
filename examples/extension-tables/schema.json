@@ -1,0 +1,35 @@
+{
+  "example_ext_downloads": [
+    {"name": "ts", "type": "bigint"},
+    {"name": "user", "type": "text"},
+    {"name": "source_host", "type": "text"},
+    {"name": "file", "type": "text"},
+    {"name": "folder_id", "type": "text"},
+    {"name": "bytes", "type": "bigint"},
+    {"name": "verdict", "type": "text"}
+  ],
+  "example_ext_folders": [
+    {"name": "folder_id", "type": "text"},
+    {"name": "parent", "type": "text"},
+    {"name": "name", "type": "text"},
+    {"name": "bytes", "type": "bigint"}
+  ],
+  "example_ext_download_summary": [
+    {"name": "user", "type": "text"},
+    {"name": "min_bytes", "type": "bigint"},
+    {"name": "source_host", "type": "text"},
+    {"name": "downloads", "type": "integer"},
+    {"name": "total_bytes", "type": "bigint"},
+    {"name": "verdicts", "type": "text"}
+  ],
+  "example_ext_folder_sizes": [
+    {"name": "folder", "type": "text"},
+    {"name": "max_depth", "type": "integer"},
+    {"name": "folder_id", "type": "text"},
+    {"name": "name", "type": "text"},
+    {"name": "level", "type": "integer"},
+    {"name": "own_bytes", "type": "bigint"},
+    {"name": "total_bytes", "type": "bigint"},
+    {"name": "subfolders", "type": "integer"}
+  ]
+}

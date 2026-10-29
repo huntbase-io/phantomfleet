@@ -1,0 +1,56 @@
+# golangci-lint v2 configuration.
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: standard # errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - bodyclose
+    - errorlint
+    - gocritic
+    - gosec
+    - misspell
+    - nilerr
+    - noctx
+    - revive
+    - unconvert
+    - unparam
+    - usestdlibvars
+  settings:
+    gosec:
+      excludes:
+        - G404 # math/rand is fine: we generate fake telemetry, not secrets
+    revive:
+      rules:
+        # The codebase uses osctrl-style SCREAMING_CASE constants.
+        - name: var-naming
+          disabled: true
+        - name: exported
+          disabled: true
+        - name: package-comments
+          disabled: true
+    misspell:
+      locale: US
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - std-error-handling
+    rules:
+      - path: _test\.go
+        linters: [gosec, noctx, unparam, bodyclose]
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      simplify: true
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
