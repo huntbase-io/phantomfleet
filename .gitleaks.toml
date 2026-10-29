@@ -1,0 +1,15 @@
+# gitleaks configuration: the default ruleset plus narrow allowlists for
+# known false positives. Keep every entry specific to a path and a value
+# shape, and say why it is safe.
+[extend]
+useDefault = true
+
+[[allowlists]]
+# Test dummies: the redaction test in client_test.go posts placeholder
+# enrol secret / node key strings to check they never reach stdout.
+description = "Placeholder enrol secret and node key in the protocol client test"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^internal/protocol/client_test\.go$''']
+regexTarget = "line"
+regexes = ['''"ENROLL-SECRET-plain-\d+", "NODEKEY-plain-\d+"''']
