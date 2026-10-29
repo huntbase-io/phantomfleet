@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-First public release, to be tagged as 0.1.0. phantomfleet was extracted
+## [0.1.0] - 2026-10-29
+
+First public release. phantomfleet was extracted
 from the `fake_news` load-testing tool in [osctrl](https://github.com/jmpsec/osctrl).
 
 ### Upgrade notes
@@ -182,4 +184,5 @@ These change behaviour for anyone who ran a pre-release build:
 - A warning is printed at start-up when `--fake-results=false`, since the
   server can then run osquery SQL on the local machine.
 
-[Unreleased]: https://github.com/huntbase-io/phantomfleet/commits/main
+[Unreleased]: https://github.com/huntbase-io/phantomfleet/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/huntbase-io/phantomfleet/releases/tag/v0.1.0
