@@ -5,11 +5,11 @@ go 1.26.0
 toolchain go1.26.10
 
 require (
-	github.com/brianvoe/gofakeit/v7 v7.18.0
+	github.com/brianvoe/gofakeit/v7 v7.18.1
 	github.com/google/uuid v1.6.0
 	gopkg.in/yaml.v3 v3.0.1
-	modernc.org/libc v1.79.1
-	modernc.org/sqlite v1.61.0
+	modernc.org/libc v1.80.0
+	modernc.org/sqlite v1.61.1
 )
 
 require (
